@@ -1,0 +1,118 @@
+
+.navbar {
+  background-color: #faf7f1;
+  padding: 0.8rem 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  font-family: 'Inter', sans-serif;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #3b2d22 !important;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.navbar-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.search-bar {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto; 
+}
+.search-wrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+.search-input {
+  width: 100%;
+  max-width: 500px; 
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 1px solid #d4cfc7;
+  outline: none;
+  font-size: 0.95rem;
+  color: #3b2d22;
+  background-color: #fffdf9;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto; 
+}
+
+
+.search-input:focus {
+  border-color: #a89782;
+  box-shadow: 0 0 4px rgba(90, 70, 50, 0.2);
+}
+
+.navbar-links {
+  gap: 20px;
+}
+
+.nav-link {
+  color: #3b2d22 !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #5a4632 !important;
+}
+
+.navbar-toggler {
+  border: none;
+  background: transparent;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  filter: invert(35%) sepia(15%) saturate(500%) hue-rotate(10deg);
+}
+
+
+@media (max-width: 991px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .search-bar {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0;
+  }
+
+  .navbar-toggler {
+    order: 3;
+  }
+
+  .navbar-links {
+    order: 4;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+
+  .navbar-brand {
+    order: 1;
+  }
+  .search-wrapper {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    margin: 10px 0;
+  }
+}
