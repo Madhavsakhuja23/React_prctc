@@ -1,0 +1,75 @@
+
+.view-collection {
+  text-decoration: none;
+  color: #8b6f47;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.view-collection:hover {
+  color: #a88650;
+}
+
+.cards {
+  padding: 4rem 3rem;
+  background-color: #f5efe6;
+}
+
+
+.cards .card {
+  height: 100%;                  
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.cards .card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  position: relative;
+}
+
+
+.cards .card-img-top {
+  height: 300px;                 
+  object-fit: cover;             
+  transition: transform 0.4s ease;
+}
+
+.cards .card:hover .card-img-top {
+  transform: scale(1.1);
+}
+
+.cards .card-body {
+  flex-grow: 1;                 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  text-align: center;           
+}
+
+.cards .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.cards .card-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+@media (max-width: 768px) {
+  .cards {
+    padding: 2rem 1rem;
+  }
+
+  .cards .card-img-top {
+    height: 180px;
+  }
+}
