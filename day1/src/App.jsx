@@ -5,6 +5,7 @@ import Navbar from './components/Navbar/Navbar'
 import Carousel from './components/Carasoul/Carousel'
 import './App.css'
 import Curated from './components/Curated/Curated'
+import Collection from './components/Collection/Collection'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -12,6 +13,7 @@ const Router= createBrowserRouter([
     <Navbar />
     <Carousel />
     <Curated />
+    <Collection />
     </>
   },
 ])
