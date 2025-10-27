@@ -6,6 +6,9 @@ import Carousel from './components/Carasoul/Carousel'
 import './App.css'
 import Curated from './components/Curated/Curated'
 import Collection from './components/Collection/Collection'
+import New from './components/Collection/New';
+import Service from './components/Services/Service'
+import Footer from './components/Footer/Footer'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -14,6 +17,9 @@ const Router= createBrowserRouter([
     <Carousel />
     <Curated />
     <Collection />
+    <New />
+    <Service />
+    <Footer />
     </>
   },
 ])
