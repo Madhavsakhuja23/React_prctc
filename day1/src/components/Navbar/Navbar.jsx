@@ -75,7 +75,7 @@ const handleLogout = () => {
             )}
           </>
         ) : (
-          <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">
+          <NavLink onClick={toggleMenu} className="dropdown-link" to="/signup">
             Sign In
           </NavLink>
         )}

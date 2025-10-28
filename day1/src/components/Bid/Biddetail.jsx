@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./Biddetail.css";
 
-export default function BidDetail() {
+export default function BidPage() {
+  const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { artwork } = location.state || {};
 
-  const [timeLeft, setTimeLeft] = useState(120); // 2 mins timer
-  const [currentBid, setCurrentBid] = useState(
-    parseInt(artwork?.bid?.replace("$", "")) || 1200
-  );
-  const [newBid, setNewBid] = useState("");
-  const [error, setError] = useState("");
-
-  const [topBidders, setTopBidders] = useState([
-    { name: "Alice", amount: currentBid },
-    { name: "John", amount: currentBid - 50 },
-    { name: "Emma", amount: currentBid - 100 },
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [bids, setBids] = useState([
+    { name: "James Smith", amount: 1200 },
+    { name: "Ava Martinez", amount: 1100 },
+    { name: "Liam Brown", amount: 1000 },
   ]);
+  const [newBid, setNewBid] = useState("");
+  const [bidError, setBidError] = useState("");
+  const [message, setMessage] = useState("");
 
-  // ⏱ Countdown Timer
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
@@ -27,121 +26,157 @@ export default function BidDetail() {
     return () => clearInterval(timer);
   }, []);
 
-  // 🤖 Simulate random bids every few seconds
+  // Auto random bids every 5 seconds
   useEffect(() => {
-    const randomBidInterval = setInterval(() => {
-      setTopBidders((prev) => {
-        const highestBid = Math.max(...prev.map((b) => b.amount));
-        const randomIncrease = Math.floor(Math.random() * 50) + 10;
-        const newRandomBid = highestBid + randomIncrease;
+    const randomBidders = [
+      "Sophia Johnson",
+      "Olivia Lee",
+      "Mason Garcia",
+      "Isabella Davis",
+      "Ethan Wilson",
+    ];
 
-        const randomNames = ["Sophia", "Oliver", "Liam", "Mia", "Noah"];
-        const newBidder = {
-          name: randomNames[Math.floor(Math.random() * randomNames.length)],
-          amount: newRandomBid,
+    const autoBidInterval = setInterval(() => {
+      setBids((prevBids) => {
+        if (timeLeft <= 0) return prevBids;
+
+        const randomBidder =
+          randomBidders[Math.floor(Math.random() * randomBidders.length)];
+        const randomIncrement = Math.floor(Math.random() * 100) + 50;
+        const currentHighest = Math.max(...prevBids.map((b) => b.amount));
+
+        const newAutoBid = {
+          name: randomBidder,
+          amount: currentHighest + randomIncrement,
         };
 
-        const updated = [...prev, newBidder]
+        const updated = [...prevBids, newAutoBid]
           .sort((a, b) => b.amount - a.amount)
           .slice(0, 3);
 
-        setCurrentBid(updated[0].amount);
         return updated;
       });
-    }, 8000); // Every 8 seconds
+    }, 5000);
 
-    return () => clearInterval(randomBidInterval);
-  }, []);
+    return () => clearInterval(autoBidInterval);
+  }, []); // run once
 
-  const formatTime = (seconds) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? "0" : ""}${sec}`;
-  };
+  // Handle Bid Submission
+  const handleBidSubmit = (e) => {
+    e.preventDefault();
+    const bidValue = parseFloat(newBid);
+    const currentHighest = Math.max(...bids.map((b) => b.amount));
 
-  const handleBid = () => {
-    const bidValue = parseInt(newBid);
-    const minBid = currentBid + 20;
-
-    if (isNaN(bidValue)) {
-      setError("Please enter a valid number.");
+    if (bidValue <= currentHighest) {
+      setBidError(`⚠ Your bid must be higher than the current highest bid of $${currentHighest}.`);
       return;
     }
 
-    if (bidValue < minBid) {
-      setError(`Minimum bid should be $${minBid}.`);
-      return;
-    }
-
-    setError("");
-    setNewBid("");
-
-    // 👑 Update top 3 bidders
-    const updatedBidders = [
-      ...topBidders,
-      { name: "You", amount: bidValue },
-    ]
+    const updatedBids = [...bids, { name: "You", amount: bidValue }]
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3);
 
-    setTopBidders(updatedBidders);
-    setCurrentBid(updatedBidders[0].amount);
+    setBids(updatedBids);
+    setNewBid("");
+    setBidError("");
   };
 
+  // Format countdown
+  const formatTime = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  // Hover zoom follow cursor
+  useEffect(() => {
+    const container = document.querySelector(".zoom-image-container");
+    const image = document.querySelector(".zoomable-image");
+    if (!container || !image) return;
+
+    const handleMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      container.style.setProperty("--x", `${x}%`);
+      container.style.setProperty("--y", `${y}%`);
+    };
+
+    container.addEventListener("mousemove", handleMove);
+    return () => container.removeEventListener("mousemove", handleMove);
+  }, []);
+
   return (
-    <div className="bid-detail-container">
-      <div className="bid-detail-card">
-        <div className="bid-left">
-          <img
-            src={`/c${artwork?.id}.jpg`}
-            alt={artwork?.title}
-            className="bid-image"
-          />
-        </div>
-
-        <div className="bid-right">
-          <h2 className="bid-title">{artwork?.title}</h2>
-
-          <p className="bid-timer">Auction ends in: {formatTime(timeLeft)}</p>
-
-          <div className="progress-bar">
-            <div
-              className="progress"
-              style={{ width: `${(timeLeft / 120) * 100}%` }}
-            ></div>
+    <div className="bid-page">
+      <div className="bid-container">
+        {/* LEFT SIDE */}
+        <div className="bidpage-left">
+          <div className="zoom-image-container">
+            <div className="zoom-image-wrapper">
+              <img
+                src={`/c${id}.jpg`}
+                alt={artwork?.title}
+                className="zoomable-image"
+              />
+            </div>
           </div>
-
-          <p className="current-bid">Current Bid: ${currentBid}</p>
-          <p className="next-bid">Next Minimum Bid: ${currentBid + 20}</p>
-
-          <div className="bid-input-section">
-            <input
-              type="number"
-              value={newBid}
-              onChange={(e) => setNewBid(e.target.value)}
-              placeholder="Enter your bid"
-            />
-            <button className="place-bid" onClick={handleBid}>
-              Place Bid
+          <div className="back-button-container">
+            <button onClick={() => navigate("/Auction")} className="back-button">
+              ← Back to Auctions
             </button>
           </div>
+        </div>
 
-          {error && <p className="error-text">{error}</p>}
+        {/* RIGHT SIDE */}
+        <div className="bid-info-section">
+          <h2 className="bid-art-title">{artwork?.title || `Artwork #${id}`}</h2>
+          <p className="bid-artist-name">by {artwork?.artist}</p>
 
-          <div className="top-bidders">
-            <h3>Top 3 Bidders</h3>
-            {topBidders.map((bidder, index) => (
-              <div
-                key={index}
-                className={`bid-box ${bidder.name === "You" ? "your-bid" : ""}`}
-              >
-                {bidder.name}: ${bidder.amount}
-              </div>
-            ))}
+          <div className="countdown-timer">
+            ⏳ Auction ends in: <span>{formatTime(timeLeft)}</span>
           </div>
 
-          <div className="starting-bid">
-            Starting bid: ${artwork?.bid?.replace("$", "")}
+          <div className="top-bids">
+            <h3>🏆 Top 3 Bids</h3>
+            <ul>
+              {bids.map((b, i) => (
+                <li key={i}>
+                  <span>{b.name}</span>
+                  <span>${b.amount}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <form className="bid-form" onSubmit={handleBidSubmit}>
+            <label>Place Your Bid:</label>
+            <input
+              type="number"
+              placeholder="Enter amount"
+              value={newBid}
+              onChange={(e) => setNewBid(e.target.value)}
+              required
+            />
+            {bidError && <p className="bid-error">{bidError}</p>}
+            <button type="submit">Submit Bid</button>
+          </form>
+
+          <div className="artist-message">
+            <label>Message for Artist:</label>
+            <textarea
+              rows="3"
+              placeholder="Write your message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </div>
+
+          <div className="art-description">
+            <h3>About this artwork</h3>
+            <p>
+              {artwork?.description ||
+                "This piece captures emotion and movement through subtle tones and layered textures. Each brushstroke reveals the artist’s deep connection with abstract expressionism."}
+            </p>
           </div>
         </div>
       </div>

@@ -13,6 +13,9 @@ import Fcollection from './components/Collection/Fcollection'
 import Auctions from './components/Auction/Auctions'
 import AuctionDetail from './components/Auction/AuctionDetail'
 import BidDetail from './components/Bid/Biddetail'
+import SignUp from './components/Authorization/Signup'
+import Login from './components/Authorization/Login'
+import ForgotPassword from './components/Authorization/Forgot'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -50,6 +53,21 @@ const Router= createBrowserRouter([
     path:"/bid/:id",
     element:<>
     <BidDetail />
+    </>
+  },{
+    path:"/signup",
+    element:<>
+    <SignUp />
+    </>
+  },{
+    path:"/login",
+    element:<>
+    <Login />
+    </>
+  },{
+    path:"/forgot",
+    element:<>
+    <ForgotPassword />
     </>
   }
 ])
