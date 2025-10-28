@@ -1,117 +1,264 @@
-/* Overall Page */
-.collection-page {
-  background-color: #f5efe6;
-  padding: 3rem 5rem;
-  min-height: 100vh;
+.collect-header {
+  padding: 40px 40px;
+  text-align: left; 
+  color: #5a4632; 
+  margin-top: 80px; /* ✅ Add this line */
 }
-
-.collection-title {
+.collect-header h2 {
   font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 2.5rem;
-  text-align: center;
-  color: #3c2f2f;
+  font-weight: 500;
+  margin: 0;
 }
 
-/* Grid Layout */
-.collection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-/* Individual Card */
-.art-card {
+.filter-sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 320px;
+  height: 100%;
   background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+  border-right: 1px solid #e5e5e5;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.08);
+  padding: 30px 20px;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1001;
+  font-family: Arial, sans-serif;
 }
 
-.art-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.filter-sidebar.open {
+  left: 0;
 }
 
-/* Image Section */
-.art-image {
+.filter-sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.filter-search {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.filter-search .search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.filter-search input[type="text"] {
   width: 100%;
-  height: 320px;
-  object-fit: cover;
+  padding: 10px 14px 10px 34px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border 0.2s ease;
 }
 
-/* Text Section */
-.art-info {
+.filter-search input[type="text"]:focus {
+  outline: none;
+  border-color: #5a4632;
+}
+
+.filter-group {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.filter-group:last-child {
+  border-bottom: none;
+}
+
+.filter-group h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #5a4632;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+}
+
+.filter-sidebar button#closeSidebar {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #666;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.filter-btn {
+  background: #f5efe6;
+  color: #5a4632;
+  border: 1px solid #8b6f47;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 1rem 1.2rem;
-  color: #3c2f2f;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+  margin-left: 20px;
+  margin-bottom: 10px;
 }
 
-.art-text {
-  flex: 1;
+.filter-btn:hover {
+  background: #e5dbcf;
+}
+
+
+/* Artsy-style Artwork Grid */
+.artsy-grid-section {
+  padding: 2rem 4rem;
+}
+
+.artsy-masonry {
+  column-count: 4;
+  column-gap: 1.6rem;
+}
+
+.artsy-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  break-inside: avoid;
+  position: relative;
+  overflow: visible; /* allow highlighted image to pop */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.image-wrapper {
+  overflow: hidden;
+  display: block;
+  position: relative;
+  border-radius: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+}
+
+.image-wrapper img {
+  width: 100%;
+  display: block;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.image-wrapper:hover img {
+  transform: scale(1.1) translateX(-3%);
+}
+
+.artsy-card-info {
+  margin-top: 0.5rem;
+}
+
+.artsy-card-info p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .artist-name {
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  font-size: 1.05rem;
+  font-weight: bold;
 }
 
-.art-title {
-  font-size: 0.95rem;
-  margin-bottom: 0.3rem;
-}
-
-.art-gallery {
-  font-size: 0.9rem;
-  color: #777;
-  margin-bottom: 0.3rem;
+.art-title, .art-gallery {
+  color: #555;
 }
 
 .art-price {
-  font-size: 0.95rem;
-  color: #3c2f2f;
+  color: #5a4632;
   font-weight: 500;
 }
 
-/* Favorite Icon */
-.fav-icon {
-  color: #c44a4a;
-  font-size: 1.2rem;
+.like-icon {
+  cursor: pointer;
   margin-left: 10px;
-  transition: transform 0.3s ease;
+  font-size: 16px;
+  padding-left: 180px;
+  color: red;
+  transition: color 0.3s ease;
 }
 
-.fav-icon:hover {
-  transform: scale(1.2);
+.like-icon.liked {
+  color: red;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
-  .collection-page {
-    padding: 2rem;
-  }
-
-  .art-image {
-    height: 260px;
-  }
+.double-tap-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  color: rgb(198, 50, 50); 
+  font-size: 50px; 
+  pointer-events: none;
 }
 
-@media (max-width: 600px) {
-  .collection-page {
-    padding: 1.5rem;
-  }
+.double-tap-heart.animate {
+  animation: pop-heart 0.6s forwards;
+}
 
-  .art-image {
-    height: 220px;
-  }
+@keyframes pop-heart {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+}
 
-  .collection-grid {
-    gap: 1.5rem;
-  }
+/* Responsive Masonry */
+@media (max-width: 1200px) {
+  .artsy-masonry { column-count: 3; padding: 2rem 2rem; }
+}
+@media (max-width: 768px) {
+  .artsy-masonry { column-count: 2; padding: 2rem 1rem; }
+}
+@media (max-width: 480px) {
+  .artsy-masonry { column-count: 1; }
+}
+/* Search Highlight */
+.artsy-card.highlight .image-wrapper {
+  transform: translateY(-15px) scale(1.1); /* more lift and zoom */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  z-index: 10;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+
+.artsy-card.dim {
+  opacity: 0.4;
+  transform: scale(0.98);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }

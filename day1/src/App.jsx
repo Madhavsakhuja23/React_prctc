@@ -9,6 +9,7 @@ import Collection from './components/Collection/Collection'
 import New from './components/Collection/New';
 import Service from './components/Services/Service'
 import Footer from './components/Footer/Footer'
+import Fcollection from './components/Collection/Fcollection'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -22,6 +23,14 @@ const Router= createBrowserRouter([
     <Footer />
     </>
   },
+  {
+    path:"/Collection",
+    element:<>
+    <Navbar />
+    <Fcollection />
+    <Footer />
+    </>
+  }
 ])
 function App() {
   return (

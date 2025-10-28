@@ -27,8 +27,6 @@ const handleLogout = () => {
   return (
     <nav className="navbar">
       <div className="container-fluid d-flex align-items-center justify-content-between">
-        
-        {/* Left: Logo + Brand */}
         <div className="d-flex align-items-center">
           <img src="/logo.png" alt="logo" className="navbar-logo" />
           <NavLink className="navbar-brand" to="/">

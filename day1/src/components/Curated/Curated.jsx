@@ -47,7 +47,7 @@ function Curated() {
       </p>
 
       <div className="text-center mb-4">
-        <NavLink to="/collection" className="view-collection">
+        <NavLink to="/Collection" className="view-collection">
           View All Collections{" "}
           <i
             className="fa-solid fa-arrow-right"

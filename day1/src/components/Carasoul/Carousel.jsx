@@ -2,13 +2,13 @@ import "./Carousel.css";
 
 function Carousel() {
   const slides = [
-    { img: "S1.jpg" },
-    { img: "S2.jpg" },
-    { img: "S3.jpg" },
+    { img: "1.jpg" },
+    { img: "3.jpg" },
+    { img: "4.jpg" },
   ];
 
   return (
-    <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
+    <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
       <div className="carousel-inner">
         {slides.map((slide, index) => (
           <div
