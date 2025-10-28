@@ -1,14 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userName, setUserName] = useState(null);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
+const toggleUserDropdown = () => {
+  setIsUserDropdownOpen(!isUserDropdownOpen);
+};
+const handleLogout = () => {
+  localStorage.removeItem("userName");
+  setUserName(null);
+  setIsUserDropdownOpen(false);
+};
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
+  useEffect(() => {
+    const storedName = localStorage.getItem("Firstname");
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
   return (
     <nav className="navbar">
       <div className="container-fluid d-flex align-items-center justify-content-between">
@@ -45,7 +60,27 @@ function Navbar() {
           <NavLink className="nav-link" to="/">Home</NavLink>
           <NavLink className="nav-link" to="/Collection">Collect</NavLink>
           <NavLink className="nav-link" to="/Auction">Auctions</NavLink>
-          <NavLink className="nav-link" to="/Sign-In">Sign In</NavLink>
+           {userName ? (
+          <>
+            <span
+              onClick={toggleUserDropdown}
+              className="dropdown-link username"
+            >
+             {userName} ▾
+            </span>
+            {isUserDropdownOpen && (
+              <div className="mobile-user-dropdown">
+                <NavLink onClick={toggleMenu} to="/profile">View Profile</NavLink>
+                <NavLink onClick={toggleMenu} to="/settings">Settings</NavLink>
+                <button onClick={handleLogout}>Log Out</button>
+              </div>
+            )}
+          </>
+        ) : (
+          <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">
+            Sign In
+          </NavLink>
+        )}
         </div>
       </div>
 
@@ -54,7 +89,27 @@ function Navbar() {
         <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
         <NavLink onClick={toggleMenu} className="dropdown-link" to="/Collection">Collect</NavLink>
         <NavLink onClick={toggleMenu} className="dropdown-link" to="/Auction">Auctions</NavLink>
-        <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">Sign In</NavLink>
+         {userName ? (
+          <>
+            <span
+              onClick={toggleUserDropdown}
+              className="dropdown-link username"
+            >
+              {userName} ▾
+            </span>
+            {isUserDropdownOpen && (
+              <div className="mobile-user-dropdown">
+                <NavLink onClick={toggleMenu} to="/profile">View Profile</NavLink>
+                <NavLink onClick={toggleMenu} to="/settings">Settings</NavLink>
+                <button onClick={handleLogout}>Log Out</button>
+              </div>
+            )}
+          </>
+        ) : (
+          <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">
+            Sign In
+          </NavLink>
+        )}
       </div>
     </nav>
   );
