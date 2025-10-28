@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "./collection.css";
 
 function Fcollection() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [userName, setUserName] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [likedArtworks, setLikedArtworks] = useState({});
+  const [userName, setUserName] = useState("");
+
   const artworks = [
     { id: 1, img: 'c1.jpg', artist: 'Bea Kusovszky', title: 'Generational Code V', gallery: 'VILTIN Gallery', price: '€6,200–€6,900' },
     { id: 2, img: 'c2.jpg', artist: 'Isabel Bonilla', title: 'Denim Ocean 15, 2025', gallery: 'PxP Contemporary', price: 'US$100' },
@@ -65,61 +68,54 @@ function Fcollection() {
 
   useEffect(() => {
     const fn = sessionStorage.getItem("Firstname");
-    if (fn) {
-      setUserName(fn);
-    }
-    const savedEmail = localStorage.getItem("email");
-    if (savedEmail) {
-      const emailInput = document.getElementById("email");
-      if (emailInput) {
-        emailInput.value = savedEmail;
-      }
-    }
+    if (fn) setUserName(fn);
   }, []);
 
   const handleSearch = (keyword) => {
     setSearchKeyword(keyword.toLowerCase());
   };
 
-  const filteredArtworks = artworks.filter(artwork => {
-    if (!searchKeyword) return true;
-    return artwork.artist.toLowerCase().includes(searchKeyword) ||
-      artwork.title.toLowerCase().includes(searchKeyword);
-  });
+  const filteredArtworks = artworks.filter(
+    (artwork) =>
+      !searchKeyword ||
+      artwork.artist.toLowerCase().includes(searchKeyword) ||
+      artwork.title.toLowerCase().includes(searchKeyword)
+  );
 
-  // const isLiked = (imgSrc) => {
-  //   return wishlistItems.some(item => (item.imgSrc || item.img) === imgSrc);
-  // };
+  const toggleLike = (id) => {
+  setLikedArtworks((prev) => {
+    const isLiking = !prev[id];
+    const updated = { ...prev, [id]: isLiking };
+    if (isLiking) {
+      const heartOverlay = document.querySelector(`#heart-overlay-${id}`);
+      if (heartOverlay) {
+        heartOverlay.classList.add("animate");
+        setTimeout(() => heartOverlay.classList.remove("animate"), 600);
+      }
+    }
+
+    return updated;
+  });
+};
+
 
   return (
     <>
-      <div id="filterSidebar" className={`filter-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button id="closeSidebar" onClick={() => setSidebarOpen(false)}>&times;</button>
+      <div
+        id="filterSidebar"
+        className={`filter-sidebar ${sidebarOpen ? "open" : ""}`}
+      >
+        <button id="closeSidebar" onClick={() => setSidebarOpen(false)}>
+          &times;
+        </button>
         <h2>Filters</h2>
-
         <div className="filter-search">
           <span className="search-icon">&#128269;</span>
-          <input type="text" placeholder="Search by keyword…" onChange={(e) => handleSearch(e.target.value)} />
-        </div>
-
-        <div className="filter-group">
-          <h3>Price</h3>
-          <label><input type="checkbox" /> Under $1,000</label><br />
-          <label><input type="checkbox" /> $1,000 - $5,000</label><br />
-          <label><input type="checkbox" /> $5,000+</label>
-        </div>
-
-        <div className="filter-group">
-          <h3>Size</h3>
-          <label><input type="checkbox" /> Small</label><br />
-          <label><input type="checkbox" /> Medium</label><br />
-          <label><input type="checkbox" /> Large</label>
-        </div>
-
-        <div className="filter-group">
-          <h3>Artist Nationality</h3>
-          <label><input type="checkbox" /> Indian</label><br />
-          <label><input type="checkbox" /> International</label>
+          <input
+            type="text"
+            placeholder="Search by keyword…"
+            onChange={(e) => handleSearch(e.target.value)}
+          />
         </div>
       </div>
 
@@ -127,36 +123,46 @@ function Fcollection() {
         <h2>Collect art and design online</h2>
       </section>
 
-      <button id="openSidebar" className="filter-btn" onClick={() => setSidebarOpen(true)}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="4" y1="21" x2="4" y2="14"></line>
-          <line x1="4" y1="10" x2="4" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12" y2="3"></line>
-          <line x1="20" y1="21" x2="20" y2="16"></line>
-          <line x1="20" y1="12" x2="20" y2="3"></line>
-          <line x1="1" y1="14" x2="7" y2="14"></line>
-          <line x1="9" y1="8" x2="15" y2="8"></line>
-          <line x1="17" y1="16" x2="23" y2="16"></line>
-        </svg>
+      <button
+        id="openSidebar"
+        className="filter-btn"
+        onClick={() => setSidebarOpen(true)}
+      >
         All Filters
       </button>
-      <div id="overlay" className={`overlay ${sidebarOpen ? 'show' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+
+      <div
+        id="overlay"
+        className={`overlay ${sidebarOpen ? "show" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      ></div>
+
       <section className="artsy-grid-section">
         <div className="artsy-masonry">
           {filteredArtworks.map((artwork) => (
-            <div
-              key={artwork.id}
-              className={`artsy-card ${searchKeyword && (artwork.artist.toLowerCase().includes(searchKeyword) || artwork.title.toLowerCase().includes(searchKeyword)) ? 'highlight' : searchKeyword ? 'dim' : ''}`}
-            >
+            <div key={artwork.id} className="artsy-card">
               <div className="image-wrapper">
                 <img src={artwork.img} alt={artwork.title} loading="lazy" />
-                <div className="double-tap-heart"><i className="fas fa-heart"></i></div>
+                <div
+                  id={`heart-overlay-${artwork.id}`}
+                  className="double-tap-heart"
+                >
+                  <FaHeart />
+                </div>
               </div>
+
               <div className="artsy-card-info">
-                <p className="artist-name">
-                  {artwork.artist}
-                </p>
+                <div className="artist-row">
+                  <p className="artist-name">{artwork.artist}</p>
+                  <span
+                    className={`like-icon ${
+                      likedArtworks[artwork.id] ? "liked" : ""
+                    }`}
+                    onClick={() => toggleLike(artwork.id)}
+                  >
+                    {likedArtworks[artwork.id] ? <FaHeart /> : <FaRegHeart />}
+                  </span>
+                </div>
                 <p className="art-title">{artwork.title}</p>
                 <p className="art-gallery">{artwork.gallery}</p>
                 <p className="art-price">{artwork.price}</p>
@@ -164,7 +170,7 @@ function Fcollection() {
             </div>
           ))}
         </div>
-      </section >
+      </section>
     </>
   );
 }
