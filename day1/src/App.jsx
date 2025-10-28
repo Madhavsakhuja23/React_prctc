@@ -10,6 +10,9 @@ import New from './components/Collection/New';
 import Service from './components/Services/Service'
 import Footer from './components/Footer/Footer'
 import Fcollection from './components/Collection/Fcollection'
+import Auctions from './components/Auction/Auctions'
+import AuctionDetail from './components/Auction/AuctionDetail'
+import BidDetail from './components/Bid/Biddetail'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -29,6 +32,24 @@ const Router= createBrowserRouter([
     <Navbar />
     <Fcollection />
     <Footer />
+    </>
+  },{
+    path:"/Auction",
+    element:<>
+    <Navbar />
+    <Auctions />
+    <Footer />
+    </>
+  }
+  ,{
+    path:"/auction/:id",
+    element:<>
+    <AuctionDetail />
+    </>
+  },{
+    path:"/bid/:id",
+    element:<>
+    <BidDetail />
     </>
   }
 ])
