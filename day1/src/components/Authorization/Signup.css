@@ -15,7 +15,7 @@
 .banner {
   flex: 1;
   background: linear-gradient(rgba(133, 117, 102, 0.6), rgba(75, 63, 51, 0.6)),
-    url("/images/sign2.jpg") no-repeat center center/cover;
+    url("/sign2.jpg") no-repeat center center/cover;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -24,14 +24,16 @@
 }
 
 .banner h1 {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: white;
   margin-bottom: 20px;
 }
 
 .banner p {
   font-size: 1rem;
   line-height: 1.6;
-  max-width: 400px;
+  max-width: 580px;
 }
 
 /* Form Section */
@@ -73,6 +75,7 @@ h2 {
   color: #4b3f33;
   margin-bottom: 20px;
   font-size: 1.8rem;
+  font-weight: 600;
 }
 
 form {
@@ -178,6 +181,6 @@ input[type="submit"]:hover {
 
   #outer {
     max-width: 90%;
-    padding: 20px;
-  }
+    padding: 20px;
+}
 }

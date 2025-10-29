@@ -62,7 +62,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="container">
+    <div className="Fcontainer">
       {/* Left Illustration */}
       <div className="illustration">
         <img src="/forgot.png" alt="Forgot Password Illustration" />

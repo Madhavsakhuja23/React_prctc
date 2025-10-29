@@ -1,140 +1,190 @@
-   /* Reset & Base */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+/* ✅ Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    body {
-      font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5efe6;
-      color: #4b3f33;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: #f5efe6;
+  font-family: 'Manrope', 'Poppins', sans-serif;
+  color: #4b3f33;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
 
-    .container {
-      display: flex;
-      background: #faf7f2;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-      width: 100%;
-      max-width: 95%;
-    }
+/* ✅ Scoped Forgot Password Container */
+.Fcontainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 900px;
+  max-width: 95%;
+  background-color: #fffdf9;
+  border-radius: 20px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
 
-    .close-btn {
-      position: absolute;
-      top: 22px;
-      right: 20px;
-      font-size: 32px;
-      color: #5a4632; /* brown */
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
+/* ✅ Close Button (X) */
+.Fcontainer .close-btn {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  font-size: 28px;
+  color: #4b3f33;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 10;
+}
 
-    .close-btn:hover {
-      color: #3b2a1d; /* darker brown on hover */
-    }
+.Fcontainer .close-btn:hover {
+  color: #2f2419;
+}
 
-    /* Left side illustration */
-    .illustration {
-      flex: 1;
-      background-color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
-    }
+/* ✅ Left Side (Illustration) */
+.Fcontainer .illustration {
+  flex: 1;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+}
 
-    .illustration img {
-      max-width: 90%;
-      height: auto;
-    }
+.Fcontainer .illustration img {
+  max-width: 85%;
+  height: auto;
+  display: block;
+}
 
-    /* Right form */
-    .form-section {
-      flex: 1;
-      padding: 60px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+/* ✅ Right Side (Form Section) */
+.Fcontainer .form-section {
+  flex: 1;
+  background-color: #f7f2eb;
+  padding: 70px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-    .form-section h1 {
-      font-size: 1.8rem;
-      color: #3a322b;
-      margin-bottom: 25px;
-      font-weight: 700;
-    }
+/* ✅ Heading */
+.Fcontainer .form-section h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3a322b;
+  margin-bottom: 25px;
+}
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
+/* ✅ Form */
+.Fcontainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-    label {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #3a322b;
-    }
+/* ✅ Label */
+.Fcontainer label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #3a322b;
+}
 
-    input[type="email"],
-    input[type="password"] {
-      padding: 14px;
-      border: 1.5px solid #d6c4b2;
-      border-radius: 8px;
-      font-size: 1rem;
-      background-color: #fdfaf6;
-      color: #4b3f33;
-      outline: none;
-      transition: 0.3s;
-      width: 100%;
-    }
+/* ✅ Input Fields */
+.Fcontainer input[type="email"],
+.Fcontainer input[type="password"] {
+  padding: 14px 15px;
+  border: 1.5px solid #d6c4b2;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #4b3f33;
+  outline: none;
+  transition: 0.3s;
+  width: 100%;
+}
 
-    input[type="email"]:focus,
-    input[type="password"]:focus {
-      border-color: #4b3f33;
-      background-color: #fff;
-    }
+.Fcontainer input[type="email"]:focus,
+.Fcontainer input[type="password"]:focus {
+  border-color: #4b3f33;
+  box-shadow: 0 0 6px rgba(75, 63, 51, 0.15);
+}
 
-    button[type="submit"] {
-      background-color: #4b3f33;
-      color: #fff;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: 0.3s;
-    }
+/* ✅ Button */
+.Fcontainer button[type="submit"] {
+  background-color: #4b3f33;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.3s ease;
+  width: 100%;
+  margin-top: 5px;
+}
 
-    button[type="submit"]:hover {
-      background-color: #3a322b;
-    }
+.Fcontainer button[type="submit"]:hover {
+  background-color: #3a322b;
+  transform: translateY(-1px);
+}
 
-    .links {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 0.9rem;
-    }
+/* ✅ Message Styling */
+.Fcontainer #emailexist,
+.Fcontainer #pwdcriteria {
+  font-size: 0.9rem;
+  color: #d9534f;
+  margin-top: -8px;
+  margin-bottom: -4px;
+  transition: 0.3s;
+}
 
-    .links a {
-      color: #4b3f33;
-      text-decoration: none;
-      font-weight: 600;
-    }
+/* ✅ Links */
+.Fcontainer .links {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+}
 
-    /* Feedback / error messages */
-    #emailexist,
-    #pwdcriteria {
-      font-size: 0.9rem;
-      margin-top: -10px;
-      margin-bottom: -5px;
-      color: #d9534f;
-      display: none;
-    }
+.Fcontainer .links a {
+  color: #4b3f33;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.Fcontainer .links a:hover {
+  color: #b1916e;
+}
+
+/* ✅ Responsive (for mobile & tablets) */
+@media (max-width: 850px) {
+  .Fcontainer {
+    flex-direction: column;
+    width: 95%;
+  }
+
+  .Fcontainer .illustration {
+    background-color: #f7f2eb;
+    padding: 30px;
+  }
+
+  .Fcontainer .illustration img {
+    max-width: 65%;
+  }
+
+  .Fcontainer .form-section {
+    padding: 50px 30px;
+  }
+
+  .Fcontainer .form-section h1 {
+    font-size: 1.7rem;
+  }
+}

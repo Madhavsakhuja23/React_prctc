@@ -1,93 +1,115 @@
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: "Manrope", sans-serif;
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
   background-color: #f5efe6;
-  color: #333;
+  font-family: 'Manrope', sans-serif;
+  color: #4b3f33;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
-/* Main Container */
+
 .login-container {
   display: flex;
-  width: 1000px;
+  width: 1100px;
   max-width: 95%;
-  background: #fff;
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
 }
 
-/* Cross Button */
+
 .close-btn {
   position: absolute;
-  top: 22px;
+  top: 2px;
   right: 20px;
-  font-size: 32px;
-  color: #5a4632;
-  text-decoration: none;
+  font-size: 30px;
+  color: #4b3f33;
   cursor: pointer;
+  text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .close-btn:hover {
-  color: #3b2a1d;
+  color: #2f241a;
 }
 
-/* Left Form Section */
+
 .form-section {
   flex: 1;
-  padding: 60px 50px;
+  padding: 80px 70px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start; 
+  background-color: #ffffff;
+  text-align: left; 
 }
 
 .form-section h1 {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 10px;
   color: #2c241d;
+  margin-bottom: 10px;
 }
 
 .form-section p.subtitle {
   font-size: 1rem;
   color: #5f5246;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
+  line-height: 1.6;
+  max-width: 95%;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
+  align-items: flex-start;
 }
+
 
 input[type="email"],
 input[type="password"] {
-  padding: 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 30px;
+  width: 480px; 
+  max-width: 100%;
+  padding: 16px 22px;
+  border: 1px solid #ddd;
+  border-radius: 0px;
   font-size: 1rem;
+  color: #4b3f33;
+  background-color: #fff;
   outline: none;
-  transition: 0.3s;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+  color: #a2978c;
 }
 
 input[type="email"]:focus,
 input[type="password"]:focus {
   border-color: #4b3f33;
+  box-shadow: 0 0 6px rgba(75, 63, 51, 0.2);
 }
+
 
 .forgot-link {
   text-align: right;
   font-size: 0.9rem;
+  width: 480px; 
   margin-top: -10px;
 }
 
@@ -100,27 +122,32 @@ input[type="password"]:focus {
 .forgot-link a:hover {
   text-decoration: underline;
 }
-
 input[type="submit"] {
+  width: 100%; /* ✅ full width of the parent container */
+  max-width: 480px; /* ✅ match the input field width */
   background: #4b3f33;
   color: #fff;
   border: none;
-  padding: 14px;
+  padding: 16px;
   border-radius: 30px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s ease, transform 0.2s ease;
+  align-self: flex-start; /* ✅ keeps alignment same as inputs */
 }
 
 input[type="submit"]:hover {
   background: #3a2f28;
+  transform: translateY(-1px);
 }
 
-/* Sign up link */
+
 .signup-link {
-  text-align: center;
+  text-align: left;
   font-size: 0.95rem;
+  margin-top: 25px;
+  padding-left: 4px;
 }
 
 .signup-link a {
@@ -133,10 +160,9 @@ input[type="submit"]:hover {
   text-decoration: underline;
 }
 
-/* Right Banner */
 .banner {
   flex: 1;
-  background-color: #f8f1e9;
+  background-color: #fdfbf9;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,22 +174,46 @@ input[type="submit"]:hover {
 }
 
 .banner-content img {
-  max-width: 400px;
-  margin-bottom: 20px;
+  width: 100%;
+  height: 420px; 
+  object-fit: cover;
+  border-radius: 10px;
 }
 
 .banner-content h2 {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #2c241d;
+  margin-top: 20px;
 }
 
-/* Responsive */
+/* ✅ Responsive */
 @media (max-width: 850px) {
   .login-container {
     flex-direction: column;
+    max-width: 90%;
   }
+
+  .form-section {
+    padding: 50px 30px;
+    align-items: flex-start; 
+    text-align: left;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="submit"],
+  .forgot-link {
+    width: 100%; 
+    max-width: 100%;
+  }
+
   .banner {
     order: -1;
+    padding: 0;
+  }
+
+  .banner-content img {
+    height: 280px;
   }
 }

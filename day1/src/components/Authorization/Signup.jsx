@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Navbar/Navbar";
 import "./Signup.css";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -132,7 +131,9 @@ function SignUp() {
   };
 
   return (
+
     <>
+   
       <div className="signup-container">
         {/* Left Banner */}
         <div className="banner">
@@ -241,8 +242,9 @@ function SignUp() {
           </div>
         </div>
       </div>
+
     </>
   );
 }
 
-export default SignUp;
+export default SignUp;
