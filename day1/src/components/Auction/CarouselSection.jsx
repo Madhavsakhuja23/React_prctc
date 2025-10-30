@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) {
   const navigate = useNavigate();
+  const [showLoginMsgFor, setShowLoginMsgFor] = useState(null); // Track which item was clicked
+
   const titles = [
     "Blue Horizon",
     "Eyes Never Lies",
@@ -47,6 +49,17 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
     bid: bids[i],
   }));
 
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  const handleBidClick = (itemId, item) => {
+    if (isLoggedIn) {
+      navigate(`/bid/${item.id}`, { state: { artwork: item } });
+    } else {
+      // Show message only for this item
+      setShowLoginMsgFor(itemId);
+    }
+  };
+
   return (
     <div className="carousel-wrapper active">
       <div className="section-header">
@@ -65,6 +78,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
             <div className="card-img-wrapper">
               <img src={`./${itemsPrefix}${item.id}.jpg`} alt={item.title} />
             </div>
+
             <div className="card-content left-align">
               <div className="art-details">
                 <h3 className="art-title">{item.title}</h3>
@@ -72,13 +86,27 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
                   {item.artist} | Current Bid: {item.bid}
                 </p>
               </div>
-              
+
               <button
-              className="bid-btn"
-              onClick={() => navigate(`/bid/${item.id}`, { state: { artwork: item } })}
+                className="bid-btn"
+                onClick={() => handleBidClick(item.id, item)}
               >
-              Bid Now
+                Bid Now
               </button>
+
+              {/* ✅ Show message only when clicked and not logged in */}
+              {showLoginMsgFor === item.id && !isLoggedIn && (
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "0.9rem",
+                    marginTop: "5px",
+                    transition: "opacity 0.3s ease",
+                  }}
+                >
+                  Please log in first to place a bid.
+                </p>
+              )}
             </div>
           </div>
         ))}

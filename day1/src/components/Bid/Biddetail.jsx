@@ -72,9 +72,12 @@ export default function BidPage() {
       return;
     }
 
-    const updatedBids = [...bids, { name: "You", amount: bidValue }]
+    const userName = localStorage.getItem("Firstname") || "You";
+
+    const updatedBids = [...bids, { name: userName, amount: bidValue }]
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3);
+
 
     setBids(updatedBids);
     setNewBid("");

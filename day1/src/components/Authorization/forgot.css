@@ -1,20 +1,14 @@
-/* ✅ Reset & Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ❌ Remove Global Reset — no * or body styling here */
 
-html, body {
-  width: 100%;
-  height: 100%;
-  background-color: #f5efe6;
-  font-family: 'Manrope', 'Poppins', sans-serif;
-  color: #4b3f33;
+/* ✅ Forgot Password Page Scoped */
+.ForgotPage {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: hidden;
+  min-height: 100vh;
+  background-color: #f5efe6;
+  font-family: 'Manrope', 'Poppins', sans-serif;
+  color: #4b3f33;
 }
 
 /* ✅ Scoped Forgot Password Container */
@@ -31,7 +25,7 @@ html, body {
   position: relative;
 }
 
-/* ✅ Close Button (X) */
+/* ✅ Close Button */
 .Fcontainer .close-btn {
   position: absolute;
   top: 18px;
@@ -48,7 +42,7 @@ html, body {
   color: #2f2419;
 }
 
-/* ✅ Left Side (Illustration) */
+/* ✅ Left Illustration */
 .Fcontainer .illustration {
   flex: 1;
   background-color: #ffffff;
@@ -64,7 +58,7 @@ html, body {
   display: block;
 }
 
-/* ✅ Right Side (Form Section) */
+/* ✅ Right Form */
 .Fcontainer .form-section {
   flex: 1;
   background-color: #f7f2eb;
@@ -74,7 +68,6 @@ html, body {
   justify-content: center;
 }
 
-/* ✅ Heading */
 .Fcontainer .form-section h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -82,21 +75,18 @@ html, body {
   margin-bottom: 25px;
 }
 
-/* ✅ Form */
 .Fcontainer form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-/* ✅ Label */
 .Fcontainer label {
   font-weight: 600;
   font-size: 0.95rem;
   color: #3a322b;
 }
 
-/* ✅ Input Fields */
 .Fcontainer input[type="email"],
 .Fcontainer input[type="password"] {
   padding: 14px 15px;
@@ -116,7 +106,6 @@ html, body {
   box-shadow: 0 0 6px rgba(75, 63, 51, 0.15);
 }
 
-/* ✅ Button */
 .Fcontainer button[type="submit"] {
   background-color: #4b3f33;
   color: #fff;
@@ -136,17 +125,13 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* ✅ Message Styling */
-.Fcontainer #emailexist,
-.Fcontainer #pwdcriteria {
+.Fcontainer #emailexist {
   font-size: 0.9rem;
-  color: #d9534f;
   margin-top: -8px;
   margin-bottom: -4px;
   transition: 0.3s;
 }
 
-/* ✅ Links */
 .Fcontainer .links {
   margin-top: 20px;
   text-align: center;
@@ -164,7 +149,6 @@ html, body {
   color: #b1916e;
 }
 
-/* ✅ Responsive (for mobile & tablets) */
 @media (max-width: 850px) {
   .Fcontainer {
     flex-direction: column;

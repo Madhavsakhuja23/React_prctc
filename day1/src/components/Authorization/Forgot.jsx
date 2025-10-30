@@ -1,126 +1,70 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import "./forgot.css";
+import React, { useState } from "react";
+import "./forgot.css"; // keep your CSS file name same as you saved
+import { Link } from "react-router-dom";
+import forgotImg from "/forgot.png"; // ⚠️ change path as per your assets folder
 
-function ForgotPassword() {
-  const navigate = useNavigate();
-
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [cpwd, setCpwd] = useState("");
-  const [emailMsg, setEmailMsg] = useState("");
-  const [pwdMsg, setPwdMsg] = useState("");
-  const [pwdColor, setPwdColor] = useState("#d9534f");
-
-  // 🟡 Pre-fill email if it exists in localStorage
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("email") || "";
-    setEmail(storedEmail);
-  }, []);
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState(""); // success or error
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const savedEmail = localStorage.getItem("email");
-
-    setEmailMsg("");
-    setPwdMsg("");
-
-    if (savedEmail !== email) {
-      setEmailMsg("No account with this email.");
+    if (!email) {
+      setStatus("error");
+      setMessage("Please enter your registered email address");
       return;
     }
 
-    if (pwd.length < 10) {
-      setPwdMsg("Password must be at least 10 characters long.");
-      setPwdColor("#d9534f");
-      return;
-    }
-
-    if (!/[A-Z]/.test(pwd) || !/\d/.test(pwd)) {
-      setPwdMsg("Password must include an uppercase letter and a number.");
-      setPwdColor("#d9534f");
-      return;
-    }
-
-    if (pwd !== cpwd) {
-      setPwdMsg("Passwords do not match.");
-      setPwdColor("#d9534f");
-      return;
-    }
-
-    setPwdMsg("Password is strong and matches.");
-    setPwdColor("green");
-
-    // ✅ Save new password
-    localStorage.setItem("password", pwd);
-
-    // Redirect after success
-    setTimeout(() => {
-      navigate("/login");
-    }, 1000);
+    // Simulated API response
+    setStatus("success");
+    setMessage("✅ Password reset link sent successfully to your email!");
+    setEmail("");
   };
 
   return (
+  <div className="ForgotPage">
     <div className="Fcontainer">
-      {/* Left Illustration */}
+      {/* Close Button */}
+      <Link to="/" className="close-btn">&times;</Link>
+
+      {/* Illustration */}
       <div className="illustration">
-        <img src="/forgot.png" alt="Forgot Password Illustration" />
+        <img src={forgotImg} alt="Forgot Password Illustration" />
       </div>
 
-      {/* Right Form */}
+      {/* Form Section */}
       <div className="form-section">
-        <NavLink to="/" className="close-btn">
-          &times;
-        </NavLink>
-
-        <h1>Forgot Password</h1>
-
+        <h1>Forgot Password?</h1>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email">
-            Enter the email address you used to register
-          </label>
+          <label htmlFor="email">Registered Email</label>
           <input
             type="email"
             id="email"
-            placeholder="Please enter your email id"
+            placeholder="Enter your registered email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
-          {emailMsg && <div id="emailexist">{emailMsg}</div>}
-
-          <input
-            type="password"
-            id="pwd"
-            placeholder="New Password"
-            value={pwd}
-            onChange={(e) => setPwd(e.target.value)}
-            required
-          />
-
-          <div id="pwdcriteria" style={{ color: pwdColor, display: pwdMsg ? "block" : "none" }}>
-            {pwdMsg}
-          </div>
-
-          <input
-            type="password"
-            id="cpwd"
-            placeholder="Confirm Password"
-            value={cpwd}
-            onChange={(e) => setCpwd(e.target.value)}
-            required
-          />
-
-          <button type="submit">Change Password</button>
-
-          <div className="links">
-            <a href="#">Terms & Conditions</a> • <a href="#">Privacy Policy</a>
-          </div>
+          {message && (
+            <p
+              id="emailexist"
+              style={{
+                color: status === "success" ? "#2e7d32" : "#d9534f",
+              }}
+            >
+              {message}
+            </p>
+          )}
+          <button type="submit">Send Reset Link</button>
         </form>
+        <div className="links">
+          <p>
+            Remember your password? <Link to="/login">Login</Link>
+          </p>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
-
-export default ForgotPassword;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./Signup.css";
 import { NavLink, useNavigate } from "react-router-dom";
+import "./Signup.css";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ function SignUp() {
     cpwd: "",
     captchaInput: "",
   });
-  const navigate = useNavigate();
+
   const [errors, setErrors] = useState({
     name: "",
     email: "",
@@ -21,28 +21,30 @@ function SignUp() {
   });
 
   const [captcha, setCaptcha] = useState("");
+  const navigate = useNavigate();
 
-  // ✅ Generate captcha on mount
+  // Generate captcha on mount
   useEffect(() => {
     generateCaptcha();
   }, []);
 
-  // 🔁 Handle input change
+  // Handle input change
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
 
-  // 🔢 Generate random captcha
+  // Generate random captcha
   const generateCaptcha = () => {
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let cap = "";
-    for (let i = 0; i < 6; i++) cap += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 0; i < 6; i++)
+      cap += chars.charAt(Math.floor(Math.random() * chars.length));
     setCaptcha(cap);
   };
 
-  // ✅ Validation functions
+  // Validation functions
   const validateName = () => {
     const hasUpper = /[A-Z]/.test(formData.fn);
     const hasLower = /[a-z]/.test(formData.fn);
@@ -111,7 +113,7 @@ function SignUp() {
     return true;
   };
 
-  // 🚀 Handle form submit
+  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -125,28 +127,29 @@ function SignUp() {
       localStorage.setItem("email", formData.email);
       localStorage.setItem("password", formData.pwd);
 
-      alert("Account created successfully!");
+      // alert("Account created successfully!");
       navigate("/login");
     }
   };
 
   return (
-
-    <>
-   
+    <div className="signup-page">
       <div className="signup-container">
         {/* Left Banner */}
         <div className="banner">
           <h1>Discover, Bid, and Own Art with Aurtistiq</h1>
           <p>
-            Create a free account and join global collectors and artists in redefining art auctions. 
-            Experience a modern way to connect with creativity.
+            Create a free account and join global collectors and artists in
+            redefining art auctions. Experience a modern way to connect with
+            creativity.
           </p>
         </div>
 
         {/* Right Form Section */}
         <div className="form-section">
-          <a href="/" className="close-btn">&times;</a>
+          <NavLink to="/" className="close-btn">
+            &times;
+          </NavLink>
           <div id="outer">
             <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
@@ -242,9 +245,8 @@ function SignUp() {
           </div>
         </div>
       </div>
-
-    </>
+    </div>
   );
 }
 
-export default SignUp;
+export default SignUp;
