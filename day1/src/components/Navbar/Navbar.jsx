@@ -13,6 +13,7 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("userName");
     localStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("Firstname");
     setUserName(null);
     setIsUserDropdownOpen(false);
   };
@@ -21,7 +22,8 @@ function Navbar() {
   };
   useEffect(() => {
   const storedName = localStorage.getItem("Firstname");
-  if (storedName) {
+  const Loggedin = localStorage.getItem("isLoggedIn");
+  if (storedName && Loggedin) {
     setUserName(storedName);
   }
 
