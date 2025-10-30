@@ -12,6 +12,7 @@ function Navbar() {
   };
   const handleLogout = () => {
     localStorage.removeItem("userName");
+    localStorage.removeItem("isLoggedIn");
     setUserName(null);
     setIsUserDropdownOpen(false);
   };
@@ -47,7 +48,7 @@ function Navbar() {
           </NavLink>
         </div>
 
-        {/* Center: Search bar */}
+        
         <form className="search-bar" role="search">
           <input
             className="search-input"
@@ -57,7 +58,7 @@ function Navbar() {
           />
         </form>
 
-        {/* Right: Hamburger (mobile) */}
+        
         <button
           className={`custom-toggler ${isMenuOpen ? "active" : ""}`}
           onClick={toggleMenu}
@@ -66,7 +67,7 @@ function Navbar() {
           <span className="custom-hamburger"></span>
         </button>
 
-        {/* Desktop links */}
+        
         <div className="navbar-links d-none d-lg-flex align-items-center">
           <NavLink className="nav-link" to="/">Home</NavLink>
           <NavLink className="nav-link" to="/Collection">Collect</NavLink>
@@ -94,7 +95,7 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown menu (below navbar) */}
+      
       <div className={`dropdown-menu-panel ${isMenuOpen ? "open" : ""}`}>
         <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
         <NavLink onClick={toggleMenu} className="dropdown-link" to="/Collection">Collect</NavLink>

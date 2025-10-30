@@ -18,7 +18,7 @@ export default function BidPage() {
   const [bidError, setBidError] = useState("");
   const [message, setMessage] = useState("");
 
-  // Countdown timer
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
@@ -26,7 +26,7 @@ export default function BidPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Auto random bids every 5 seconds
+  
   useEffect(() => {
     const randomBidders = [
       "Sophia Johnson",
@@ -59,9 +59,9 @@ export default function BidPage() {
     }, 5000);
 
     return () => clearInterval(autoBidInterval);
-  }, []); // run once
+  }, []); 
 
-  // Handle Bid Submission
+
   const handleBidSubmit = (e) => {
     e.preventDefault();
     const bidValue = parseFloat(newBid);
@@ -84,14 +84,14 @@ export default function BidPage() {
     setBidError("");
   };
 
-  // Format countdown
+
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Hover zoom follow cursor
+
   useEffect(() => {
     const container = document.querySelector(".zoom-image-container");
     const image = document.querySelector(".zoomable-image");
@@ -112,7 +112,7 @@ export default function BidPage() {
   return (
     <div className="bid-page">
       <div className="bid-container">
-        {/* LEFT SIDE */}
+  
         <div className="bidpage-left">
           <div className="zoom-image-container">
             <div className="zoom-image-wrapper">
@@ -130,7 +130,7 @@ export default function BidPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+
         <div className="bid-info-section">
           <h2 className="bid-art-title">{artwork?.title || `Artwork #${id}`}</h2>
           <p className="bid-artist-name">by {artwork?.artist}</p>

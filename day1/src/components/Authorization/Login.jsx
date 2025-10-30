@@ -15,16 +15,11 @@ const Login = () => {
   const storedName = localStorage.getItem("Firstname");
 
   if (email === storedEmail && pwd === storedPassword) {
-    // ✅ Mark user as logged in
     localStorage.setItem("isLoggedIn", "true");
 
-    // ✅ Store name (for Navbar etc.)
     localStorage.setItem("Firstname", storedName);
 
-    // ✅ Optional: Also keep in session storage if needed
     sessionStorage.setItem("Firstname", storedName);
-
-    // alert(`Welcome back, ${storedName}!`);
     navigate("/");
   } else {
     alert("Invalid email or password. Please try again.");
@@ -79,7 +74,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Banner Section */}
         <div className="banner">
           <div className="banner-content">
             <h1>“Where creativity finds its true collector.”</h1>

@@ -7,8 +7,8 @@
 
 body {
   font-family: 'Helvetica Neue', sans-serif;
-  background-color: #f5efe6; /* nude beige */
-  color: #4b3f33; /* deep taupe */
+  background-color: #f5efe6; 
+  color: #4b3f33; 
   line-height: 1.6;
   scroll-behavior: smooth;
 }
@@ -39,7 +39,7 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid #e0ddd7;
 }
 
-/* Background Image with Opacity */
+
 .auction-hero::before {
   content: "";
   position: absolute;
@@ -54,13 +54,13 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 0;
 }
 
-/* Keep content above the background */
+
 .auction-hero > * {
   position: relative;
   z-index: 1;
 }
 
-/* Left Side of Hero */
+
 .hero-left {
   flex: 1;
   min-width: 280px;
@@ -83,7 +83,7 @@ h1, h2, h3, h4, h5, h6 {
 
 }
 
-/* Right Side of Hero */
+
 .hero-right {
   flex: 1;
   min-width: 280px;
@@ -106,7 +106,6 @@ h1, h2, h3, h4, h5, h6 {
   text-align: justify;
 }
 
-/* Call to Action Button */
 .hero-right a {
   display: inline-block;
   margin-top: 5px;
@@ -123,7 +122,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* Filter Tabs */
+
 .filter-tabs {
   display: flex;
   justify-content: center;
@@ -145,7 +144,6 @@ h1, h2, h3, h4, h5, h6 {
   color: #4b3f33;
 }
 
-/* Carousel Section */
 .carousel-section {
   margin-top: 3rem;
   position: relative;
@@ -199,7 +197,6 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: underline;
 }
 
-/* Carousel Track with Scrollbar */
 .carousel-track.scrollable {
   display: flex;
   gap: 1.5rem;
@@ -224,11 +221,10 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
 }
 
-/* --- Curator's Picks Card Styling --- */
 
 .carousel-track.scrollable {
   display: flex;
-  gap: 1rem; /* Reduced gap for tighter layout */
+  gap: 1rem; 
   overflow-x: auto;
   padding-bottom: 0.5rem;
   scroll-behavior: smooth;
@@ -266,11 +262,11 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
-/* Image with overlay */
+
 .card-img-wrapper {
   position: relative;
   width: 100%;
-  height: 300px; /* Increased height */
+  height: 300px; 
   overflow: hidden;
 }
 
@@ -282,7 +278,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .carousel-card:hover img {
-  transform: scale(1.08); /* Zoom-in effect */
+  transform: scale(1.08); 
 }
 
 .card-img-wrapper::after {
@@ -290,7 +286,7 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.15); /* soft dark overlay */
+  background: rgba(0, 0, 0, 0.15); 
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -417,19 +413,19 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0.2rem 0;
 }
 
-/* Past Auction Styling */
+
 .past-card {
   position: relative;
 }
 
 .past-card img {
-  opacity: 0.5; /* faded to show closed */
+  opacity: 0.5; 
   filter: grayscale(40%);
 }
 .auction-desc {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* space between texts */
+  gap: 0.5rem; 
 }
 
 .auction-desc p {
@@ -442,7 +438,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #31261b;
 }
 
-/* Responsive */
+
 
 .live-auctions {
   padding: 2rem;
@@ -456,7 +452,6 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-/* Masonry column layout */
 .masonry-grid {
   column-count: 3;
   column-gap: 1.5rem;

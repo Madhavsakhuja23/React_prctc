@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "./forgot.css"; // keep your CSS file name same as you saved
+import "./forgot.css"; 
 import { Link } from "react-router-dom";
-import forgotImg from "/forgot.png"; // ⚠️ change path as per your assets folder
+import forgotImg from "/forgot.png"; 
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState(""); // success or error
+  const [status, setStatus] = useState(""); 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +17,6 @@ export default function ForgotPassword() {
       return;
     }
 
-    // Simulated API response
     setStatus("success");
     setMessage("✅ Password reset link sent successfully to your email!");
     setEmail("");
@@ -26,15 +25,12 @@ export default function ForgotPassword() {
   return (
   <div className="ForgotPage">
     <div className="Fcontainer">
-      {/* Close Button */}
       <Link to="/" className="close-btn">&times;</Link>
 
-      {/* Illustration */}
       <div className="illustration">
         <img src={forgotImg} alt="Forgot Password Illustration" />
       </div>
 
-      {/* Form Section */}
       <div className="form-section">
         <h1>Forgot Password?</h1>
         <form onSubmit={handleSubmit}>

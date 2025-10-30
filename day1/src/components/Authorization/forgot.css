@@ -1,6 +1,3 @@
-/* ❌ Remove Global Reset — no * or body styling here */
-
-/* ✅ Forgot Password Page Scoped */
 .ForgotPage {
   display: flex;
   justify-content: center;
@@ -11,7 +8,7 @@
   color: #4b3f33;
 }
 
-/* ✅ Scoped Forgot Password Container */
+
 .Fcontainer {
   display: flex;
   align-items: center;
@@ -25,7 +22,6 @@
   position: relative;
 }
 
-/* ✅ Close Button */
 .Fcontainer .close-btn {
   position: absolute;
   top: 18px;
@@ -42,7 +38,7 @@
   color: #2f2419;
 }
 
-/* ✅ Left Illustration */
+
 .Fcontainer .illustration {
   flex: 1;
   background-color: #ffffff;
@@ -58,7 +54,7 @@
   display: block;
 }
 
-/* ✅ Right Form */
+
 .Fcontainer .form-section {
   flex: 1;
   background-color: #f7f2eb;

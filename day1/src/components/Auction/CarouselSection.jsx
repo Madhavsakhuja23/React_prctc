@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) {
   const navigate = useNavigate();
-  const [showLoginMsgFor, setShowLoginMsgFor] = useState(null); // Track which item was clicked
+  const [showLoginMsgFor, setShowLoginMsgFor] = useState(null); 
 
   const titles = [
     "Blue Horizon",
@@ -55,7 +55,6 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
     if (isLoggedIn) {
       navigate(`/bid/${item.id}`, { state: { artwork: item } });
     } else {
-      // Show message only for this item
       setShowLoginMsgFor(itemId);
     }
   };
@@ -94,7 +93,6 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
                 Bid Now
               </button>
 
-              {/* ✅ Show message only when clicked and not logged in */}
               {showLoginMsgFor === item.id && !isLoggedIn && (
                 <p
                   style={{

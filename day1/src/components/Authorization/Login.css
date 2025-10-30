@@ -116,7 +116,6 @@ input[type="submit"]:hover {
   text-decoration: none;
 }
 
-/* Right - Banner Section */
 .banner {
   flex: 1;
   background: linear-gradient(rgba(133, 117, 102, 0.6), rgba(75, 63, 51, 0.6)),

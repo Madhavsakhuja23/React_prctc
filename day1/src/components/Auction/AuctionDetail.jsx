@@ -6,7 +6,6 @@ function AuctionDetail() {
     const { id } = useParams();
     const [reminderSet, setReminderSet] = useState(false);
 
-    // Mock data - in a real app, you'd fetch this from an API
     const auctionData = {
         u1: { title: 'Celestial Dreams', description: 'Futuristic artworks for visionaries.', imageUrl: '/upcoming1.jpg', type: 'upcoming' },
         u2: { title: 'Next Wave', description: 'Emerging trends and new talents.', imageUrl: '/upcoming2.jpg', type: 'upcoming' },
@@ -397,12 +396,10 @@ function CurrentAuctionDetail({ auction }) {
     };
 
     const handleSendMessage = () => {
-        // Handle send message
         animateButton();
     };
 
     const handleSubmitBid = () => {
-        // Handle bid submission
         animateButton();
     };
 
