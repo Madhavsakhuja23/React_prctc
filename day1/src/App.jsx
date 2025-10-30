@@ -16,6 +16,7 @@ import BidDetail from './components/Bid/Biddetail'
 import SignUp from "./components/Authorization/Signup" 
 import Login from "./components/Authorization/Login"
 import ForgotPassword from "./components/Authorization/Forgot"
+import Otp from './components/Authorization/Otp'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -69,6 +70,11 @@ const Router= createBrowserRouter([
     path:"/forgot",
     element:<>
     <ForgotPassword />
+    </>
+  },{
+    path:"/otp",
+    element:<>
+    <Otp />
     </>
   }
 ])
