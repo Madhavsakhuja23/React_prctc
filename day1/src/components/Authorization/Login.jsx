@@ -17,19 +17,15 @@ const Login = () => {
 
     if (email === storedEmail && pwd === storedPassword) {
       const otp = Math.floor(1000 + Math.random() * 9000);
-      console.log("Generated OTP:", otp);
-
-      // ✅ Store values BEFORE async call
+      // console.log("Generated OTP:", otp);
       localStorage.setItem("Firstname", storedName);
       sessionStorage.setItem("Firstname", storedName);
-      localStorage.setItem("otp", otp.toString()); // ensure it's string
+      localStorage.setItem("otp", otp.toString());
       const emailSent = await sendEmail(email, otp);
       if (emailSent) {
-        // alert("✅ OTP sent to your email!");
         navigate("/otp");
       } else {
         alert("❌ Failed to send OTP. Try again.");
-        // sessionStorage.removeItem("otp"); // clear invalid OTP
       }
     } else {
       alert("Invalid email or password.");
