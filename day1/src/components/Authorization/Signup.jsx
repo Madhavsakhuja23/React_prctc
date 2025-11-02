@@ -11,6 +11,7 @@ function SignUp() {
     pwd: "",
     cpwd: "",
     captchaInput: "",
+    role: "", // 👈 new field for Seller/Buyer
   });
 
   const [errors, setErrors] = useState({
@@ -18,6 +19,7 @@ function SignUp() {
     email: "",
     pwd: "",
     captcha: "",
+    role: "", // 👈 role error
   });
 
   const [captcha, setCaptcha] = useState("");
@@ -30,6 +32,10 @@ function SignUp() {
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
+  };
+
+  const handleRoleChange = (e) => {
+    setFormData({ ...formData, role: e.target.value });
   };
 
   const generateCaptcha = () => {
@@ -56,45 +62,43 @@ function SignUp() {
   };
 
   const validateEmail = async () => {
-  const key = "ema_live_myHyeXrksaI52K3z9nDBs1z46RYEjNL9W4CaMKRd";
-  const email = formData.email.trim();
+    const key = "ema_live_myHyeXrksaI52K3z9nDBs1z46RYEjNL9W4CaMKRd";
+    const email = formData.email.trim();
 
-  // Basic frontend email pattern check before calling API
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    setErrors((prev) => ({
-      ...prev,
-      email: "Please enter a valid email address.",
-    }));
-    return false;
-  }
-
-  const url = `https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`;
-
-  try {
-    const res = await fetch(url);
-    const result = await res.json();
-
-    if (result.state === "deliverable") {
-      setErrors((prev) => ({ ...prev, email: "" })); // clear error if valid
-      return true;
-    } else {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
       setErrors((prev) => ({
         ...prev,
-        email: "This email address is invalid or undeliverable.",
+        email: "Please enter a valid email address.",
       }));
       return false;
     }
-  } catch (error) {
-    console.error("Email validation error:", error);
-    setErrors((prev) => ({
-      ...prev,
-      email: "Error validating email. Please try again.",
-    }));
-    return false;
-  }
-};
 
+    const url = `https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`;
+
+    try {
+      const res = await fetch(url);
+      const result = await res.json();
+
+      if (result.state === "deliverable") {
+        setErrors((prev) => ({ ...prev, email: "" }));
+        return true;
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          email: "This email address is invalid or undeliverable.",
+        }));
+        return false;
+      }
+    } catch (error) {
+      console.error("Email validation error:", error);
+      setErrors((prev) => ({
+        ...prev,
+        email: "Error validating email. Please try again.",
+      }));
+      return false;
+    }
+  };
 
   const validatePassword = () => {
     const { pwd, cpwd } = formData;
@@ -129,6 +133,18 @@ function SignUp() {
     return true;
   };
 
+  const validateRole = () => {
+    if (!formData.role) {
+      setErrors((prev) => ({
+        ...prev,
+        role: "Please select whether you are a Seller or Buyer.",
+      }));
+      return false;
+    }
+    setErrors((prev) => ({ ...prev, role: "" }));
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -145,16 +161,17 @@ function SignUp() {
     const isEmailValid = await validateEmail();
     const isPwdValid = validatePassword();
     const isCaptchaValid = validateCaptcha();
+    const isRoleValid = validateRole();
 
-    if (isNameValid && isEmailValid && isPwdValid && isCaptchaValid) {
+    if (isNameValid && isEmailValid && isPwdValid && isCaptchaValid && isRoleValid) {
       localStorage.setItem("Firstname", formData.fn);
       localStorage.setItem("email", formData.email);
       localStorage.setItem("password", formData.pwd);
+      localStorage.setItem("role", formData.role); // 👈 save role
 
       navigate("/login");
     }
   };
-
 
   return (
     <div className="signup-page">
@@ -162,9 +179,7 @@ function SignUp() {
         <div className="banner">
           <h1>Discover, Bid, and Own Art with Aurtistiq</h1>
           <p>
-            Create a free account and join global collectors and artists in
-            redefining art auctions. Experience a modern way to connect with
-            creativity.
+            Create a free account and join global collectors and artists in redefining art auctions.
           </p>
         </div>
 
@@ -200,6 +215,7 @@ function SignUp() {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
+                onBlur={validateEmail}
                 required
               />
               {errors.email && <div className="error-text">{errors.email}</div>}
@@ -234,14 +250,38 @@ function SignUp() {
               />
               {errors.pwd && <div className="error-text">{errors.pwd}</div>}
 
+              {/* 👇 New Section for Seller/Buyer */}
+              <div className="role-section">
+                <label><b>Register As:</b></label>
+                <div className="role-options">
+                  <label>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="Seller"
+                      checked={formData.role === "Seller"}
+                      onChange={handleRoleChange}
+                    />
+                    Seller
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="Buyer"
+                      checked={formData.role === "Buyer"}
+                      onChange={handleRoleChange}
+                    />
+                    Buyer
+                  </label>
+                </div>
+                {errors.role && <div className="error-text">{errors.role}</div>}
+              </div>
+
               {/* Captcha */}
               <div className="captcha-container">
                 <div className="captcha-box">{captcha}</div>
-                <button
-                  type="button"
-                  className="captcha-refresh"
-                  onClick={generateCaptcha}
-                >
+                <button type="button" className="captcha-refresh" onClick={generateCaptcha}>
                   ↻ Refresh
                 </button>
               </div>
@@ -254,14 +294,11 @@ function SignUp() {
                 onChange={handleChange}
                 required
               />
-              {errors.captcha && (
-                <div className="error-text">{errors.captcha}</div>
-              )}
+              {errors.captcha && <div className="error-text">{errors.captcha}</div>}
 
               <input type="submit" value="Register" />
               <p className="login-link">
-                Already have an account?{" "}
-                <NavLink to="/login">Login</NavLink>
+                Already have an account? <NavLink to="/login">Login</NavLink>
               </p>
             </form>
           </div>

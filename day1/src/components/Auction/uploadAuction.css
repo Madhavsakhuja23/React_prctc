@@ -1,0 +1,98 @@
+.upload-auction-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  background-color: #fffaf5;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(75, 63, 51, 0.08);
+  border: 1px solid #e0ddd7;
+}
+
+.upload-title {
+  font-size: 2rem;
+  text-align: center;
+  color: #4b3f33;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4b3f33;
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="file"] {
+  padding: 0.8rem;
+  border: 1px solid #d4c7b6;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f5efe6;
+  color: #4b3f33;
+  transition: all 0.2s ease-in-out;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #8b6f47;
+  outline: none;
+  background-color: #fff;
+}
+
+textarea {
+  resize: none;
+  height: 120px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.image-preview {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: center;
+}
+
+.image-preview img {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(75, 63, 51, 0.2);
+}
+
+.upload-btn {
+  background-color: #8b6f47;
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+  background-color: #5a4632;
+}

@@ -66,12 +66,13 @@
 
 .signup-page #outer {
   width: 80%;
-  max-width: 400px;
+  max-width: 380px; /* slightly narrower */
   background-color: #fff;
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  padding: 25px 20px; /* reduced padding */
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
+
 
 .signup-page h2 {
   text-align: center;
@@ -84,29 +85,22 @@
 .signup-page form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px; /* smaller gaps between fields */
 }
+
 
 .signup-page input[type="text"],
 .signup-page input[type="email"],
 .signup-page input[type="password"] {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  outline: none;
+  padding: 8px 10px;
 }
 
+
 .signup-page input[type="submit"] {
-  background-color: #4b3f33;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
+  padding: 10px;
+  font-size: 0.95rem;
 }
+
 
 .signup-page input[type="submit"]:hover {
   background-color: #3a322b;
@@ -186,4 +180,40 @@
     max-width: 90%;
     padding: 20px;
   }
+}
+/* Role Selection (Seller/Buyer) */
+.signup-page .role-section {
+  margin-top: 10px;
+}
+
+.signup-page .role-section label {
+  color: #4b3f33;
+  font-weight: 600;
+}
+
+.signup-page .role-options {
+  display: flex;
+  justify-content: flex-start;
+  gap: 25px;
+  margin-top: 8px;
+}
+
+.signup-page .role-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.signup-page .role-options input[type="radio"] {
+  accent-color: #4b3f33; /* sets custom brown color for radio button */
+  transform: scale(1.1);
+}
+
+.signup-page .role-options label:hover {
+  color: #4b3f33;
 }
