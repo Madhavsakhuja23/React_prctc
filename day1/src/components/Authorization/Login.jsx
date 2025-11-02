@@ -20,6 +20,7 @@ const Login = () => {
       // console.log("Generated OTP:", otp);
       localStorage.setItem("Firstname", storedName);
       sessionStorage.setItem("Firstname", storedName);
+      sessionStorage.setItem("email", email);
       const emailSent = await sendEmail(email, otp);
       if (emailSent) {
         localStorage.setItem("otp", otp.toString());

@@ -55,26 +55,46 @@ function SignUp() {
     return true;
   };
 
-  const validateEmail = () => {
-    const regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com)$/;
-    const storedEmail = localStorage.getItem("email");
-    if (!regex.test(formData.email)) {
+  const validateEmail = async () => {
+  const key = "ema_live_myHyeXrksaI52K3z9nDBs1z46RYEjNL9W4CaMKRd";
+  const email = formData.email.trim();
+
+  // Basic frontend email pattern check before calling API
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    setErrors((prev) => ({
+      ...prev,
+      email: "Please enter a valid email address.",
+    }));
+    return false;
+  }
+
+  const url = `https://api.emailvalidation.io/v1/info?apikey=${key}&email=${email}`;
+
+  try {
+    const res = await fetch(url);
+    const result = await res.json();
+
+    if (result.state === "deliverable") {
+      setErrors((prev) => ({ ...prev, email: "" })); // clear error if valid
+      return true;
+    } else {
       setErrors((prev) => ({
         ...prev,
-        email: "Email must end with @gmail.com or @yahoo.com.",
+        email: "This email address is invalid or undeliverable.",
       }));
       return false;
     }
-    if (storedEmail === formData.email) {
-      setErrors((prev) => ({
-        ...prev,
-        email: "An account with this email already exists.",
-      }));
-      return false;
-    }
-    setErrors((prev) => ({ ...prev, email: "" }));
-    return true;
-  };
+  } catch (error) {
+    console.error("Email validation error:", error);
+    setErrors((prev) => ({
+      ...prev,
+      email: "Error validating email. Please try again.",
+    }));
+    return false;
+  }
+};
+
 
   const validatePassword = () => {
     const { pwd, cpwd } = formData;
@@ -109,11 +129,20 @@ function SignUp() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const existingEmail = localStorage.getItem("email");
+    if (existingEmail === formData.email) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "Account already registered with this email.",
+      }));
+      return;
+    }
+
     const isNameValid = validateName();
-    const isEmailValid = validateEmail();
+    const isEmailValid = await validateEmail();
     const isPwdValid = validatePassword();
     const isCaptchaValid = validateCaptcha();
 
@@ -125,6 +154,7 @@ function SignUp() {
       navigate("/login");
     }
   };
+
 
   return (
     <div className="signup-page">

@@ -14,6 +14,7 @@ function Navbar() {
     localStorage.removeItem("userName");
     localStorage.removeItem("isLoggedIn");
     sessionStorage.removeItem("Firstname");
+    sessionStorage.removeItem("email");
     setUserName(null);
     setIsUserDropdownOpen(false);
   };
