@@ -17,6 +17,7 @@ import SignUp from "./components/Authorization/Signup"
 import Login from "./components/Authorization/Login"
 import ForgotPassword from "./components/Authorization/Forgot"
 import Otp from './components/Authorization/Otp'
+import Chatbot from './components/Chatbot/Chatbot'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -28,6 +29,7 @@ const Router= createBrowserRouter([
     <New />
     <Service />
     <Footer />
+    <Chatbot />
     </>
   },
   {

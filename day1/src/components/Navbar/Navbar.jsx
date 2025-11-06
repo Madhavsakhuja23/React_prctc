@@ -2,16 +2,19 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
-function Navbar() {
+function Navbar({ onSearch }) {  // ✅ Accept search callback prop
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userName, setUserName] = useState(null);
-  const [role, setRole] = useState(null); // 👈 new state for role
+  const [role, setRole] = useState(null);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // ✅ Search term state
 
+  // Toggle user dropdown
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
   };
 
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("userName");
     localStorage.removeItem("isLoggedIn");
@@ -23,14 +26,23 @@ function Navbar() {
     setIsUserDropdownOpen(false);
   };
 
+  // Toggle mobile menu
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // ✅ Handle search input
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (onSearch) onSearch(value); // Pass search text to parent (like Collection)
+  };
+
+  // Load stored user and role
   useEffect(() => {
     const storedName = localStorage.getItem("Firstname");
     const loggedIn = localStorage.getItem("isLoggedIn");
-    const storedRole = localStorage.getItem("role"); // 👈 get stored role
+    const storedRole = localStorage.getItem("role");
 
     if (storedName && loggedIn) {
       setUserName(storedName);
@@ -61,13 +73,19 @@ function Navbar() {
           </NavLink>
         </div>
 
-        {/* Search Bar */}
-        <form className="search-bar" role="search">
+        {/* ✅ Functional Search Bar */}
+        <form
+          className="search-bar"
+          role="search"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <input
             className="search-input"
             type="search"
             placeholder="Search artworks..."
             aria-label="Search"
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
         </form>
 
@@ -84,19 +102,34 @@ function Navbar() {
         <div className="navbar-links d-none d-lg-flex align-items-center">
           {role === "Seller" ? (
             <>
-              <NavLink className="nav-link" to="/">Home</NavLink>
-              <NavLink className="nav-link" to="/upload">Upload Artwork</NavLink>
-              <NavLink className="nav-link" to="/live-auctions">Live Auctions</NavLink>
-              <NavLink className="nav-link" to="/history">History</NavLink>
+              <NavLink className="nav-link" to="/">
+                Home
+              </NavLink>
+              <NavLink className="nav-link" to="/upload">
+                Upload Artwork
+              </NavLink>
+              <NavLink className="nav-link" to="/live-auctions">
+                Live Auctions
+              </NavLink>
+              <NavLink className="nav-link" to="/history">
+                History
+              </NavLink>
             </>
           ) : (
             <>
-              <NavLink className="nav-link" to="/">Home</NavLink>
-              <NavLink className="nav-link" to="/Collection">Collect</NavLink>
-              <NavLink className="nav-link" to="/Auction">Auctions</NavLink>
+              <NavLink className="nav-link" to="/">
+                Home
+              </NavLink>
+              <NavLink className="nav-link" to="/Collection">
+                Collect
+              </NavLink>
+              <NavLink className="nav-link" to="/Auction">
+                Auctions
+              </NavLink>
             </>
           )}
 
+          {/* User Section */}
           {userName ? (
             <div className="user-dropdown">
               <span onClick={toggleUserDropdown} className="username">
@@ -112,7 +145,11 @@ function Navbar() {
               )}
             </div>
           ) : (
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/signup">
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/signup"
+            >
               Sign In
             </NavLink>
           )}
@@ -121,36 +158,89 @@ function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       <div className={`dropdown-menu-panel ${isMenuOpen ? "open" : ""}`}>
-        {role === "seller" ? (
+        {role === "Seller" ? (
           <>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/upload">Upload Artwork</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/live-auctions">Live Auctions</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/history">History</NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/"
+            >
+              Home
+            </NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/upload"
+            >
+              Upload Artwork
+            </NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/live-auctions"
+            >
+              Live Auctions
+            </NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/history"
+            >
+              History
+            </NavLink>
           </>
         ) : (
           <>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/Collection">Collect</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/Auction">Auctions</NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/"
+            >
+              Home
+            </NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/Collection"
+            >
+              Collect
+            </NavLink>
+            <NavLink
+              onClick={toggleMenu}
+              className="dropdown-link"
+              to="/Auction"
+            >
+              Auctions
+            </NavLink>
           </>
         )}
 
         {userName ? (
           <>
-            <span onClick={toggleUserDropdown} className="dropdown-link username">
+            <span
+              onClick={toggleUserDropdown}
+              className="dropdown-link username"
+            >
               {userName} ▾
             </span>
             {isUserDropdownOpen && (
               <div className="mobile-user-dropdown">
-                <NavLink onClick={toggleMenu} to="/profile">View Profile</NavLink>
-                <NavLink onClick={toggleMenu} to="/settings">Settings</NavLink>
+                <NavLink onClick={toggleMenu} to="/profile">
+                  View Profile
+                </NavLink>
+                <NavLink onClick={toggleMenu} to="/settings">
+                  Settings
+                </NavLink>
                 <button onClick={handleLogout}>Log Out</button>
               </div>
             )}
           </>
         ) : (
-          <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">
+          <NavLink
+            onClick={toggleMenu}
+            className="dropdown-link"
+            to="/Sign-In"
+          >
             Sign In
           </NavLink>
         )}
