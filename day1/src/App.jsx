@@ -18,6 +18,7 @@ import Login from "./components/Authorization/Login"
 import ForgotPassword from "./components/Authorization/Forgot"
 import Otp from './components/Authorization/Otp'
 import Chatbot from './components/Chatbot/Chatbot'
+import BidHistory from './components/Bid/BidHistory'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -56,6 +57,13 @@ const Router= createBrowserRouter([
     path:"/bid/:id",
     element:<>
     <BidDetail />
+    </>
+  },{
+    path:"/bid-history",
+    element:<>
+    <Navbar />
+    <BidHistory />
+    <Footer />
     </>
   },{
     path:"/signup",

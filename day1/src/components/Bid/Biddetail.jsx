@@ -8,7 +8,7 @@ export default function BidPage() {
   const navigate = useNavigate();
   const { artwork } = location.state || {};
 
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [bids, setBids] = useState([
     { name: "James Smith", amount: 1200 },
     { name: "Ava Martinez", amount: 1100 },
@@ -18,15 +18,42 @@ export default function BidPage() {
   const [bidError, setBidError] = useState("");
   const [message, setMessage] = useState("");
 
-
+  // ⏳ Timer countdown with winner logic
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft((prev) => {
+        if (prev > 1) return prev - 1;
+        if (prev === 1) {
+          const userName = localStorage.getItem("Firstname");
+          const highestBid = Math.max(...bids.map((b) => b.amount));
+          const userBid = bids.find((b) => b.name === userName);
+          const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
+
+          const artworkEntry = bidHistory.find(
+            (entry) => entry.id === id && entry.status === "Participated"
+          );
+
+          if (artworkEntry) {
+            if (userBid && userBid.amount === highestBid) {
+              artworkEntry.status = "Winner";
+              localStorage.setItem("isWinner", "true");
+            } else if (bids.some((b) => b.name === userName)) {
+              artworkEntry.status = "Top 3";
+            } else {
+              const index = bidHistory.indexOf(artworkEntry);
+              bidHistory.splice(index, 1);
+            }
+            localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
+          }
+          return 0;
+        }
+        return 0;
+      });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [bids, id]);
 
-  
+  // 🤖 Auto bidding simulation
   useEffect(() => {
     const randomBidders = [
       "Sophia Johnson",
@@ -59,16 +86,23 @@ export default function BidPage() {
     }, 5000);
 
     return () => clearInterval(autoBidInterval);
-  }, []); 
+  }, [timeLeft]);
 
-
+  // 💰 User bid submission
   const handleBidSubmit = (e) => {
     e.preventDefault();
+    if (timeLeft <= 0) {
+      setBidError("⚠ Auction has ended. No more bids accepted.");
+      return;
+    }
+
     const bidValue = parseFloat(newBid);
     const currentHighest = Math.max(...bids.map((b) => b.amount));
 
     if (bidValue <= currentHighest) {
-      setBidError(`⚠ Your bid must be higher than the current highest bid of $${currentHighest}.`);
+      setBidError(
+        `⚠ Your bid must be higher than the current highest bid of $${currentHighest}.`
+      );
       return;
     }
 
@@ -78,20 +112,32 @@ export default function BidPage() {
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3);
 
+    // 🗂 Save bid to history
+    const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
+    const newEntry = {
+      id: id,
+      title: artwork?.title || `Artwork #${id}`,
+      artist: artwork?.artist || "Unknown Artist",
+      bidAmount: bidValue,
+      date: new Date().toISOString(),
+      status: "Participated",
+    };
+    bidHistory.push(newEntry);
+    localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
 
     setBids(updatedBids);
     setNewBid("");
     setBidError("");
   };
 
-
+  // ⏱ Format countdown display
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-
+  // 🔍 Image zoom effect
   useEffect(() => {
     const container = document.querySelector(".zoom-image-container");
     const image = document.querySelector(".zoomable-image");
@@ -112,7 +158,7 @@ export default function BidPage() {
   return (
     <div className="bid-page">
       <div className="bid-container">
-  
+        {/* LEFT SECTION */}
         <div className="bidpage-left">
           <div className="zoom-image-container">
             <div className="zoom-image-wrapper">
@@ -130,13 +176,14 @@ export default function BidPage() {
           </div>
         </div>
 
-
+        {/* RIGHT SECTION */}
         <div className="bid-info-section">
           <h2 className="bid-art-title">{artwork?.title || `Artwork #${id}`}</h2>
           <p className="bid-artist-name">by {artwork?.artist}</p>
 
           <div className="countdown-timer">
-            ⏳ Auction ends in: <span>{formatTime(timeLeft)}</span>
+            ⏳ Auction ends in:{" "}
+            <span>{timeLeft > 0 ? formatTime(timeLeft) : "ENDED"}</span>
           </div>
 
           <div className="top-bids">
@@ -151,18 +198,25 @@ export default function BidPage() {
             </ul>
           </div>
 
-          <form className="bid-form" onSubmit={handleBidSubmit}>
-            <label>Place Your Bid:</label>
-            <input
-              type="number"
-              placeholder="Enter amount"
-              value={newBid}
-              onChange={(e) => setNewBid(e.target.value)}
-              required
-            />
-            {bidError && <p className="bid-error">{bidError}</p>}
-            <button type="submit">Submit Bid</button>
-          </form>
+          {timeLeft > 0 ? (
+            <form className="bid-form" onSubmit={handleBidSubmit}>
+              <label>Place Your Bid:</label>
+              <input
+                type="number"
+                placeholder="Enter amount"
+                value={newBid}
+                onChange={(e) => setNewBid(e.target.value)}
+                required
+              />
+              {bidError && <p className="bid-error">{bidError}</p>}
+              <button type="submit">Submit Bid</button>
+            </form>
+          ) : (
+            <div className="auction-ended">
+              <h3>🏁 Auction Ended</h3>
+              <p>The highest bid wins! Check your bid history for results.</p>
+            </div>
+          )}
 
           <div className="artist-message">
             <label>Message for Artist:</label>
