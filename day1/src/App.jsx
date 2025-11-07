@@ -19,6 +19,7 @@ import ForgotPassword from "./components/Authorization/Forgot"
 import Otp from './components/Authorization/Otp'
 import Chatbot from './components/Chatbot/Chatbot'
 import BidHistory from './components/Bid/BidHistory'
+import Payment from './components/Bid/Payment'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -85,6 +86,11 @@ const Router= createBrowserRouter([
     path:"/otp",
     element:<>
     <Otp />
+    </>
+  },{
+    path:"/payment",
+    element:<>
+    <Payment />
     </>
   }
 ])

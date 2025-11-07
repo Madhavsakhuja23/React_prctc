@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./Biddetail.css";
+import { toast } from "sonner";
 
 export default function BidPage() {
   const { id } = useParams();
@@ -9,6 +10,9 @@ export default function BidPage() {
   const { artwork } = location.state || {};
 
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
+  const timeLeftRef = useRef(timeLeft);
+  timeLeftRef.current = timeLeft; // keep ref synced
+
   const [bids, setBids] = useState([
     { name: "James Smith", amount: 1200 },
     { name: "Ava Martinez", amount: 1100 },
@@ -18,7 +22,7 @@ export default function BidPage() {
   const [bidError, setBidError] = useState("");
   const [message, setMessage] = useState("");
 
-  // ⏳ Timer countdown with winner logic
+  // ⏳ Countdown timer + Winner detection + Redirect to Payment
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -37,11 +41,23 @@ export default function BidPage() {
             if (userBid && userBid.amount === highestBid) {
               artworkEntry.status = "Winner";
               localStorage.setItem("isWinner", "true");
+              localStorage.setItem("winningArtwork", JSON.stringify(artwork));
+
+              // 🎉 Notify + redirect to payment page
+              toast.success(
+                "🎉 Congratulations! You are the highest bidder. Redirecting to Payment Page..."
+              );
+
+              setTimeout(() => {
+                navigate("/Payment", {
+                  state: { artwork, winningBid: highestBid },
+                });
+              }, 3000);
             } else if (bids.some((b) => b.name === userName)) {
               artworkEntry.status = "Top 3";
             } else {
               const index = bidHistory.indexOf(artworkEntry);
-              bidHistory.splice(index, 1);
+              if (index !== -1) bidHistory.splice(index, 1);
             }
             localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
           }
@@ -50,10 +66,11 @@ export default function BidPage() {
         return 0;
       });
     }, 1000);
-    return () => clearInterval(timer);
-  }, [bids, id]);
 
-  // 🤖 Auto bidding simulation
+    return () => clearInterval(timer);
+  }, [bids, id, artwork, navigate]);
+
+  // 🤖 Auto-bidding simulation (random bidders)
   useEffect(() => {
     const randomBidders = [
       "Sophia Johnson",
@@ -61,32 +78,64 @@ export default function BidPage() {
       "Mason Garcia",
       "Isabella Davis",
       "Ethan Wilson",
+      "Benjamin White",
+      "Charlotte Young",
     ];
 
-    const autoBidInterval = setInterval(() => {
+    let timeoutId = null;
+
+    const placeRandomBid = () => {
+      if (timeLeftRef.current <= 0) {
+        console.log("[AutoBid] Auction ended — stopping auto bids.");
+        return;
+      }
+
       setBids((prevBids) => {
-        if (timeLeft <= 0) return prevBids;
+        const currentHighest = prevBids.length
+          ? Math.max(...prevBids.map((b) => b.amount))
+          : 0;
 
         const randomBidder =
           randomBidders[Math.floor(Math.random() * randomBidders.length)];
-        const randomIncrement = Math.floor(Math.random() * 100) + 50;
-        const currentHighest = Math.max(...prevBids.map((b) => b.amount));
+        const randomIncrement = Math.floor(Math.random() * 200) + 50;
 
         const newAutoBid = {
           name: randomBidder,
           amount: currentHighest + randomIncrement,
         };
 
+        console.log(`[AutoBid] ${randomBidder} placed $${newAutoBid.amount}`);
+
         const updated = [...prevBids, newAutoBid]
           .sort((a, b) => b.amount - a.amount)
           .slice(0, 3);
 
+        // Optional: Save in bid history
+        const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
+        bidHistory.push({
+          id,
+          title: artwork?.title || `Artwork #${id}`,
+          artist: artwork?.artist || "Unknown Artist",
+          bidAmount: newAutoBid.amount,
+          bidder: randomBidder,
+          date: new Date().toISOString(),
+          status: "Auto Bid",
+        });
+        localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
+
         return updated;
       });
-    }, 5000);
 
-    return () => clearInterval(autoBidInterval);
-  }, [timeLeft]);
+      // Schedule next auto-bid (2–8 seconds)
+      const nextDelay = Math.random() * 6000 + 2000;
+      timeoutId = setTimeout(placeRandomBid, nextDelay);
+    };
+
+    // Start after 3 seconds
+    timeoutId = setTimeout(placeRandomBid, 3000);
+
+    return () => clearTimeout(timeoutId);
+  }, [id, artwork?.title, artwork?.artist]);
 
   // 💰 User bid submission
   const handleBidSubmit = (e) => {
@@ -97,7 +146,12 @@ export default function BidPage() {
     }
 
     const bidValue = parseFloat(newBid);
-    const currentHighest = Math.max(...bids.map((b) => b.amount));
+    if (Number.isNaN(bidValue)) {
+      setBidError("⚠ Please enter a valid number.");
+      return;
+    }
+
+    const currentHighest = bids.length ? Math.max(...bids.map((b) => b.amount)) : 0;
 
     if (bidValue <= currentHighest) {
       setBidError(
@@ -115,7 +169,7 @@ export default function BidPage() {
     // 🗂 Save bid to history
     const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
     const newEntry = {
-      id: id,
+      id,
       title: artwork?.title || `Artwork #${id}`,
       artist: artwork?.artist || "Unknown Artist",
       bidAmount: bidValue,
@@ -130,14 +184,14 @@ export default function BidPage() {
     setBidError("");
   };
 
-  // ⏱ Format countdown display
+  // ⏱ Format countdown
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // 🔍 Image zoom effect
+  // 🔍 Image zoom
   useEffect(() => {
     const container = document.querySelector(".zoom-image-container");
     const image = document.querySelector(".zoomable-image");

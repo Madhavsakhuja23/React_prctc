@@ -1,0 +1,20 @@
+.payment-page {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.pay-now-btn {
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+
+.pay-now-btn:hover {
+  background-color: #2563eb;
+}

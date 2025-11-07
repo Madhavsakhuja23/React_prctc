@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Otp.css";
+import { toast } from "sonner";
 
 const Otp = () => {
   const navigate = useNavigate();
@@ -11,7 +12,8 @@ const Otp = () => {
     const timer = setTimeout(() => {
       localStorage.removeItem("otp");
       console.log("⏰ OTP expired and removed from localStorage");
-      alert("⚠️ OTP expired. Please log in again.");
+      toast.error("⚠️ OTP expired. Please log in again.")
+      // alert("⚠️ OTP expired. Please log in again.");
       navigate("/login");
     }, 10 * 60 * 1000);
     return () => clearTimeout(timer);
@@ -19,6 +21,7 @@ const Otp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (otp === generatedOtp) {
+      toast.success("Login Successfully");
       localStorage.setItem("isLoggedIn", "true");
       localStorage.removeItem("otp");
       navigate("/");

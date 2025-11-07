@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import "./Login.css";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,10 +27,12 @@ const Login = () => {
         localStorage.setItem("otp", otp.toString());
         navigate("/otp");
       } else {
-        alert("❌ Failed to send OTP. Try again.");
+        toast.error("❌ Failed to send OTP. Try again.")
+        // alert("❌ Failed to send OTP. Try again.");
       }
     } else {
-      alert("Invalid email or password.");
+      toast.error("Invalid email or password.");
+      // alert("Invalid email or password.");
     }
   };
 

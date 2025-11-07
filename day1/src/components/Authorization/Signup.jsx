@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import {toast} from "sonner"
 import "./Signup.css";
 
 function SignUp() {
@@ -164,11 +165,11 @@ function SignUp() {
     const isRoleValid = validateRole();
 
     if (isNameValid && isEmailValid && isPwdValid && isCaptchaValid && isRoleValid) {
+      toast.success("Account Succesfully Created");
       localStorage.setItem("Firstname", formData.fn);
       localStorage.setItem("email", formData.email);
       localStorage.setItem("password", formData.pwd);
       localStorage.setItem("role", formData.role); // 👈 save role
-
       navigate("/login");
     }
   };
