@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./uploadAuction.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function UploadAuction() {
   const [formData, setFormData] = useState({
@@ -25,23 +26,44 @@ export default function UploadAuction() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Get existing auctions from localStorage
-    const existing = JSON.parse(localStorage.getItem("sellerAuctions")) || [];
+  const seller = JSON.parse(localStorage.getItem("user"));
+  if (!seller) {
+    toast.error("You must be logged in to upload artwork");
+    return;
+  }
 
-    // Add new auction
-    const newAuction = { ...formData, id: Date.now() };
-    localStorage.setItem("sellerAuctions", JSON.stringify([...existing, newAuction]));
-
-    // Reset form
-    setFormData({ title: "", desc: "", category: "painting", status: "current", image: "" });
-    setPreview("");
-
-    // Redirect to Home
-    navigate("/");
+  const dataToSend = {
+    ...formData,
+    sellerId: seller.id, // user _id from backend
   };
+
+  try {
+    const res = await fetch("http://localhost:5000/api/artworks/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSend),
+    });
+
+    const data = await res.json();
+
+    if (res.status === 201) {
+      toast.success("🎨 Artwork Uploaded Successfully!");
+      navigate("/");
+    } else {
+      toast.error(data.message);
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+    toast.error("Server error! Please try again.");
+  }
+};
+
 
   return (
     <div className="upload-auction-container">
@@ -91,7 +113,7 @@ export default function UploadAuction() {
             >
               <option value="current">Current</option>
               <option value="upcoming">Upcoming</option>
-              <option value="past">Past</option>
+              {/* <option value="past">Past</option> */}
             </select>
           </div>
         </div>

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./Biddetail.css";
-import { toast } from "sonner";
+import emailjs from "@emailjs/browser";
 
 export default function BidPage() {
   const { id } = useParams();
@@ -9,68 +9,61 @@ export default function BidPage() {
   const navigate = useNavigate();
   const { artwork } = location.state || {};
 
-  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
-  const timeLeftRef = useRef(timeLeft);
-  timeLeftRef.current = timeLeft; // keep ref synced
+  // BASE PRICE FIX
+  const basePrice = Number(
+    (artwork?.currentBid ??
+      artwork?.price ??
+      artwork?.bid ??
+      "0")
+      .toString()
+      .replace(/[^0-9]/g, "")
+  );
 
-  const [bids, setBids] = useState([
-    { name: "James Smith", amount: 1200 },
-    { name: "Ava Martinez", amount: 1100 },
-    { name: "Liam Brown", amount: 1000 },
-  ]);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [bids, setBids] = useState([]);
   const [newBid, setNewBid] = useState("");
   const [bidError, setBidError] = useState("");
   const [message, setMessage] = useState("");
 
-  // ⏳ Countdown timer + Winner detection + Redirect to Payment
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [showSorry, setShowSorry] = useState(false);
+  const [winner, setWinner] = useState(null);
+
+  // Set base price once
+  useEffect(() => {
+    if (basePrice > 0) {
+      setBids([{ name: "Starting Price", amount: basePrice }]);
+    }
+  }, [basePrice]);
+
+  const timeRef = useRef(timeLeft);
+  useEffect(() => {
+    timeRef.current = timeLeft;
+  }, [timeLeft]);
+
+  // Auction End Logic
+  useEffect(() => {
+    if (timeLeft === 0 && bids.length > 0) {
+      const highestBid = bids[0];
+      const userName = localStorage.getItem("Firstname") || "You";
+
+      setWinner(highestBid);
+
+      if (highestBid.name === userName) setShowCongrats(true);
+      else setShowSorry(true);
+    }
+  }, [timeLeft, bids]);
+
+  // Countdown Timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev > 1) return prev - 1;
-        if (prev === 1) {
-          const userName = localStorage.getItem("Firstname");
-          const highestBid = Math.max(...bids.map((b) => b.amount));
-          const userBid = bids.find((b) => b.name === userName);
-          const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
-
-          const artworkEntry = bidHistory.find(
-            (entry) => entry.id === id && entry.status === "Participated"
-          );
-
-          if (artworkEntry) {
-            if (userBid && userBid.amount === highestBid) {
-              artworkEntry.status = "Winner";
-              localStorage.setItem("isWinner", "true");
-              localStorage.setItem("winningArtwork", JSON.stringify(artwork));
-
-              // 🎉 Notify + redirect to payment page
-              toast.success(
-                "🎉 Congratulations! You are the highest bidder. Redirecting to Payment Page..."
-              );
-
-              setTimeout(() => {
-                navigate("/Payment", {
-                  state: { artwork, winningBid: highestBid },
-                });
-              }, 3000);
-            } else if (bids.some((b) => b.name === userName)) {
-              artworkEntry.status = "Top 3";
-            } else {
-              const index = bidHistory.indexOf(artworkEntry);
-              if (index !== -1) bidHistory.splice(index, 1);
-            }
-            localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
-          }
-          return 0;
-        }
-        return 0;
-      });
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [bids, id, artwork, navigate]);
+  }, []);
 
-  // 🤖 Auto-bidding simulation (random bidders)
+  // Auto Bids System
   useEffect(() => {
     const randomBidders = [
       "Sophia Johnson",
@@ -78,84 +71,49 @@ export default function BidPage() {
       "Mason Garcia",
       "Isabella Davis",
       "Ethan Wilson",
-      "Benjamin White",
-      "Charlotte Young",
     ];
 
-    let timeoutId = null;
-
-    const placeRandomBid = () => {
-      if (timeLeftRef.current <= 0) {
-        console.log("[AutoBid] Auction ended — stopping auto bids.");
-        return;
-      }
+    const autoBidInterval = setInterval(() => {
+      if (timeRef.current <= 3) return;
 
       setBids((prevBids) => {
-        const currentHighest = prevBids.length
-          ? Math.max(...prevBids.map((b) => b.amount))
-          : 0;
+        const highest =
+          prevBids.length > 0
+            ? Math.max(...prevBids.map((b) => b.amount))
+            : basePrice;
+
+        const randomIncrement = Math.floor(Math.random() * 100) + 50;
 
         const randomBidder =
           randomBidders[Math.floor(Math.random() * randomBidders.length)];
-        const randomIncrement = Math.floor(Math.random() * 200) + 50;
 
         const newAutoBid = {
           name: randomBidder,
-          amount: currentHighest + randomIncrement,
+          amount: highest + randomIncrement,
         };
 
-        console.log(`[AutoBid] ${randomBidder} placed $${newAutoBid.amount}`);
-
-        const updated = [...prevBids, newAutoBid]
+        return [...prevBids, newAutoBid]
           .sort((a, b) => b.amount - a.amount)
           .slice(0, 3);
-
-        // Optional: Save in bid history
-        const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
-        bidHistory.push({
-          id,
-          title: artwork?.title || `Artwork #${id}`,
-          artist: artwork?.artist || "Unknown Artist",
-          bidAmount: newAutoBid.amount,
-          bidder: randomBidder,
-          date: new Date().toISOString(),
-          status: "Auto Bid",
-        });
-        localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
-
-        return updated;
       });
+    }, 5000);
 
-      // Schedule next auto-bid (2–8 seconds)
-      const nextDelay = Math.random() * 6000 + 2000;
-      timeoutId = setTimeout(placeRandomBid, nextDelay);
-    };
+    return () => clearInterval(autoBidInterval);
+  }, [basePrice]);
 
-    // Start after 3 seconds
-    timeoutId = setTimeout(placeRandomBid, 3000);
-
-    return () => clearTimeout(timeoutId);
-  }, [id, artwork?.title, artwork?.artist]);
-
-  // 💰 User bid submission
+  // Manual Bid
   const handleBidSubmit = (e) => {
     e.preventDefault();
-    if (timeLeft <= 0) {
-      setBidError("⚠ Auction has ended. No more bids accepted.");
-      return;
-    }
 
-    const bidValue = parseFloat(newBid);
-    if (Number.isNaN(bidValue)) {
-      setBidError("⚠ Please enter a valid number.");
-      return;
-    }
+    const bidValue = Number(newBid);
+    const highest =
+      bids.length > 0
+        ? Math.max(...bids.map((b) => b.amount))
+        : basePrice;
 
-    const currentHighest = bids.length ? Math.max(...bids.map((b) => b.amount)) : 0;
-
-    if (bidValue <= currentHighest) {
+    if (bidValue <= highest) {
       setBidError(
-        `⚠ Your bid must be higher than the current highest bid of $${currentHighest}.`
+        `Your bid must be higher than the current highest bid of $${highest}.`
       );
       return;
     }
@@ -166,48 +124,115 @@ export default function BidPage() {
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3);
 
-    // 🗂 Save bid to history
-    const bidHistory = JSON.parse(localStorage.getItem("bidHistory") || "[]");
-    const newEntry = {
-      id,
-      title: artwork?.title || `Artwork #${id}`,
-      artist: artwork?.artist || "Unknown Artist",
-      bidAmount: bidValue,
-      date: new Date().toISOString(),
-      status: "Participated",
-    };
-    bidHistory.push(newEntry);
-    localStorage.setItem("bidHistory", JSON.stringify(bidHistory));
-
     setBids(updatedBids);
     setNewBid("");
     setBidError("");
   };
 
-  // ⏱ Format countdown
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    return `${m.toString().padStart(2, "0")}:${s
+      .toString()
+      .padStart(2, "0")}`;
   };
 
-  // 🔍 Image zoom
-  useEffect(() => {
-    const container = document.querySelector(".zoom-image-container");
-    const image = document.querySelector(".zoomable-image");
-    if (!container || !image) return;
+  // Confetti Component
+  const Confetti = () => {
+    useEffect(() => {
+      const canvas = document.getElementById("confettiCanvas");
+      const ctx = canvas.getContext("2d");
 
-    const handleMove = (e) => {
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      container.style.setProperty("--x", `${x}%`);
-      container.style.setProperty("--y", `${y}%`);
-    };
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-    container.addEventListener("mousemove", handleMove);
-    return () => container.removeEventListener("mousemove", handleMove);
-  }, []);
+      const colors = ["#a67c52", "#d9c7a0", "#f5e6ca"];
+      const particles = [];
+
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          w: 10,
+          h: 14,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speed: Math.random() * 3 + 2,
+          rotate: Math.random() * 360,
+        });
+      }
+
+      const animate = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p) => {
+          p.y += p.speed;
+          p.rotate += 5;
+
+          if (p.y > canvas.height) {
+            p.y = -20;
+            p.x = Math.random() * canvas.width;
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotate * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+    }, []);
+
+    return (
+      <canvas
+        id="confettiCanvas"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: 9999,
+        }}
+      ></canvas>
+    );
+  };
+
+  // EmailJS
+  const sendMessageToArtist = () => {
+    if (!message.trim()) {
+      alert("Message cannot be empty!");
+      return;
+    }
+
+    const userName = localStorage.getItem("Firstname") || "Anonymous";
+
+    emailjs
+      .send(
+        "service_xnj2uqj",
+        "template_8z9h9za",
+        {
+          to_email: artwork.artistEmail,
+          user_name: userName,
+          artwork_title: artwork.title,
+          message: message,
+        },
+        "Utoi2SbtmtWx2iJjf"
+      )
+      .then(() => {
+        alert("Message sent successfully!");
+        setMessage("");
+      })
+      .catch((err) => {
+        console.error("EmailJS error:", err);
+        alert("Failed to send message. Try again.");
+      });
+  };
 
   return (
     <div className="bid-page">
@@ -223,8 +248,12 @@ export default function BidPage() {
               />
             </div>
           </div>
-          <div className="back-button-container">
-            <button onClick={() => navigate("/Auction")} className="back-button">
+
+          <div className="left-back-btn-container">
+            <button
+              onClick={() => navigate("/Auction")}
+              className="back-button"
+            >
               ← Back to Auctions
             </button>
           </div>
@@ -232,12 +261,13 @@ export default function BidPage() {
 
         {/* RIGHT SECTION */}
         <div className="bid-info-section">
-          <h2 className="bid-art-title">{artwork?.title || `Artwork #${id}`}</h2>
+          <h2 className="bid-art-title">
+            {artwork?.title || `Artwork #${id}`}
+          </h2>
           <p className="bid-artist-name">by {artwork?.artist}</p>
 
           <div className="countdown-timer">
-            ⏳ Auction ends in:{" "}
-            <span>{timeLeft > 0 ? formatTime(timeLeft) : "ENDED"}</span>
+            ⏳ Auction ends in: <span>{formatTime(timeLeft)}</span>
           </div>
 
           <div className="top-bids">
@@ -252,25 +282,19 @@ export default function BidPage() {
             </ul>
           </div>
 
-          {timeLeft > 0 ? (
-            <form className="bid-form" onSubmit={handleBidSubmit}>
-              <label>Place Your Bid:</label>
-              <input
-                type="number"
-                placeholder="Enter amount"
-                value={newBid}
-                onChange={(e) => setNewBid(e.target.value)}
-                required
-              />
-              {bidError && <p className="bid-error">{bidError}</p>}
-              <button type="submit">Submit Bid</button>
-            </form>
-          ) : (
-            <div className="auction-ended">
-              <h3>🏁 Auction Ended</h3>
-              <p>The highest bid wins! Check your bid history for results.</p>
-            </div>
-          )}
+          <form className="bid-form" onSubmit={handleBidSubmit}>
+            <label>Place Your Bid:</label>
+            <input
+              type="number"
+              placeholder="Enter amount"
+              value={newBid}
+              onChange={(e) => setNewBid(e.target.value)}
+              required
+            />
+            {bidError && <p className="bid-error">{bidError}</p>}
+
+            <button type="submit">Submit Bid</button>
+          </form>
 
           <div className="artist-message">
             <label>Message for Artist:</label>
@@ -280,17 +304,49 @@ export default function BidPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-          </div>
 
-          <div className="art-description">
-            <h3>About this artwork</h3>
-            <p>
-              {artwork?.description ||
-                "This piece captures emotion and movement through subtle tones and layered textures. Each brushstroke reveals the artist’s deep connection with abstract expressionism."}
-            </p>
+            <button
+              className="send-msg-btn"
+              onClick={sendMessageToArtist}
+            >
+              Send Message
+            </button>
           </div>
         </div>
       </div>
+
+      {/* WINNER MODALS */}
+      {showCongrats && (
+        <>
+          <Confetti />
+          <div className="modal-overlay">
+            <div className="modal-box modal-congrats">
+              <h2>🎉 Congratulations!</h2>
+              <p>
+                {winner?.name}, you won with{" "}
+                <strong>${winner?.amount}</strong>!
+              </p>
+              <button onClick={() => navigate("/Auction")}>
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showSorry && (
+        <div className="modal-overlay">
+          <div className="modal-box modal-sorry">
+            <h2>😔 Auction Ended</h2>
+            <p>
+              <strong>Better luck next time!</strong>
+            </p>
+            <button onClick={() => navigate("/Auction")}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

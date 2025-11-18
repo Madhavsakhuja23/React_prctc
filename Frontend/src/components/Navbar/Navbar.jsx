@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar({ onSearch }) {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userName, setUserName] = useState(null);
-  const [role, setRole] = useState(null);
-  const [isWinner, setIsWinner] = useState(false);
+  const [user, setUser] = useState(null);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Toggle dropdown
+  // Toggle user dropdown
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
   };
@@ -22,56 +21,53 @@ function Navbar({ onSearch }) {
 
   // Logout
   const handleLogout = () => {
-    localStorage.removeItem("userName");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("role");
-    localStorage.removeItem("isWinner");
-    sessionStorage.removeItem("Firstname");
-    sessionStorage.removeItem("email");
+    console.log("LOGOUT CLICKED");
 
-    setUserName(null);
-    setRole(null);
-    setIsWinner(false);
-    setIsUserDropdownOpen(false);
+    localStorage.clear();
+    sessionStorage.clear();
+
+    setUser(null);
+    navigate("/", { replace: true });
+    window.location.reload(); 
   };
 
   // Search handler
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (onSearch) onSearch(value); // Pass to parent (Collection page)
+    if (onSearch) onSearch(value);
   };
 
-  // Load stored data
+  // Load user from localStorage
   useEffect(() => {
-    const storedName = localStorage.getItem("Firstname");
-    const loggedIn = localStorage.getItem("isLoggedIn");
-    const storedRole = localStorage.getItem("role");
-    const winnerStatus = localStorage.getItem("isWinner");
-
-    if (storedName && loggedIn) {
-      setUserName(storedName);
-      setRole(storedRole);
-      setIsWinner(winnerStatus === "true");
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
 
     // Close dropdown if clicked outside
     const handleClickOutside = (event) => {
-      const dropdown = document.querySelector(".user-dropdown");
-      if (dropdown && !dropdown.contains(event.target)) {
+      const dropdown = document.querySelector(".user-dropdown-menu");
+      const usernameBtn = document.querySelector(".username");
+
+      if (
+        dropdown &&
+        !dropdown.contains(event.target) &&
+        usernameBtn &&
+        !usernameBtn.contains(event.target)
+      ) {
         setIsUserDropdownOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <nav className="navbar">
       <div className="container-fluid d-flex align-items-center justify-content-between">
+
         {/* Logo */}
         <div className="d-flex align-items-center">
           <NavLink className="navbar-brand" to="/">
@@ -81,29 +77,29 @@ function Navbar({ onSearch }) {
         </div>
 
         {/* Search Bar */}
-        <form className="search-bar" role="search" onSubmit={(e) => e.preventDefault()}>
+        <form className="search-bar" onSubmit={(e) => e.preventDefault()}>
           <input
             className="search-input"
             type="search"
             placeholder="Search artworks..."
-            aria-label="Search"
             value={searchTerm}
             onChange={handleSearchChange}
           />
         </form>
 
-        {/* Hamburger for mobile */}
+        {/* Hamburger */}
         <button
           className={`custom-toggler ${isMenuOpen ? "active" : ""}`}
           onClick={toggleMenu}
-          aria-label="Toggle navigation"
         >
           <span className="custom-hamburger"></span>
         </button>
 
         {/* Desktop Links */}
         <div className="navbar-links d-none d-lg-flex align-items-center">
-          {role === "Seller" ? (
+
+          {/* ROLE BASED MENU */}
+          {user?.role === "Seller" ? (
             <>
               <NavLink className="nav-link" to="/">Home</NavLink>
               <NavLink className="nav-link" to="/upload">Upload Artwork</NavLink>
@@ -115,37 +111,59 @@ function Navbar({ onSearch }) {
               <NavLink className="nav-link" to="/">Home</NavLink>
               <NavLink className="nav-link" to="/Collection">Collect</NavLink>
               <NavLink className="nav-link" to="/Auction">Auctions</NavLink>
-              {userName && isWinner && (
-                <NavLink className="nav-link" to="/bid-history">Bid History</NavLink>
-              )}
             </>
           )}
 
-          {/* User Dropdown */}
-          {userName ? (
-            <div className="user-dropdown">
-              <span onClick={toggleUserDropdown} className="username">
-                {userName} ▾
+          {/* USER DROPDOWN */}
+          {user ? (
+            <div
+              className="user-dropdown"
+              onClick={(e) => e.stopPropagation()} // Prevent bubbling
+            >
+              <span
+                className="username"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleUserDropdown();
+                }}
+              >
+                {user.name} ▾
               </span>
+
               {isUserDropdownOpen && (
-                <div className="user-dropdown-menu">
+                <div
+                  className="user-dropdown-menu"
+                  onClick={(e) => e.stopPropagation()} // Keep dropdown open
+                >
                   <NavLink to="/profile">View Profile</NavLink>
                   <NavLink to="/settings">Settings</NavLink>
-                  <button onClick={handleLogout}>Log Out</button>
+
+                  <button
+                    type="button"
+                    className="logout-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleLogout();
+                    }}
+                  >
+                    Log Out
+                  </button>
                 </div>
               )}
             </div>
           ) : (
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/signup">
+            <NavLink className="dropdown-link" to="/signup">
               Sign In
             </NavLink>
           )}
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Dropdown Menu */}
       <div className={`dropdown-menu-panel ${isMenuOpen ? "open" : ""}`}>
-        {role === "Seller" ? (
+
+        {user?.role === "Seller" ? (
           <>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/upload">Upload Artwork</NavLink>
@@ -157,29 +175,45 @@ function Navbar({ onSearch }) {
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/Collection">Collect</NavLink>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/Auction">Auctions</NavLink>
-            {userName && isWinner && (
-              <NavLink onClick={toggleMenu} className="dropdown-link" to="/bid-history">
-                Bid History
-              </NavLink>
-            )}
           </>
         )}
 
-        {userName ? (
+        {user ? (
           <>
-            <span onClick={toggleUserDropdown} className="dropdown-link username">
-              {userName} ▾
+            <span
+              className="username"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleUserDropdown();
+              }}
+            >
+              {user.name} ▾
             </span>
+
             {isUserDropdownOpen && (
-              <div className="mobile-user-dropdown">
+              <div
+                className="mobile-user-dropdown"
+                onClick={(e) => e.stopPropagation()} // Prevent close
+              >
                 <NavLink onClick={toggleMenu} to="/profile">View Profile</NavLink>
                 <NavLink onClick={toggleMenu} to="/settings">Settings</NavLink>
-                <button onClick={handleLogout}>Log Out</button>
+
+                <button
+                  type="button"
+                  className="logout-btn"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleLogout();
+                  }}
+                >
+                  Log Out
+                </button>
               </div>
             )}
           </>
         ) : (
-          <NavLink onClick={toggleMenu} className="dropdown-link" to="/Sign-In">
+          <NavLink onClick={toggleMenu} className="dropdown-link" to="/signup">
             Sign In
           </NavLink>
         )}

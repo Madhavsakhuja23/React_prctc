@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) {
   const navigate = useNavigate();
-  const [showLoginMsgFor, setShowLoginMsgFor] = useState(null); 
+  const [showLoginMsgFor, setShowLoginMsgFor] = useState(null);
 
   const titles = [
     "Blue Horizon",
@@ -17,6 +17,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
     "NeverEver",
     "NeverEver",
   ];
+
   const artists = [
     "Michael White",
     "John Brown",
@@ -29,6 +30,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
     "Baillle Smith",
     "Baillle Smith",
   ];
+
   const bids = [
     "$1200",
     "$900",
@@ -42,18 +44,32 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
     "$1200",
   ];
 
+  const artistEmails = [
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+    "manshaverma1716@gmail.com",
+  ];
+
   const items = titles.map((t, i) => ({
     id: i + 1,
     title: t,
     artist: artists[i],
     bid: bids[i],
+    artistEmail: artistEmails[i],
   }));
 
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
   const handleBidClick = (itemId, item) => {
     if (isLoggedIn) {
-      navigate(`/bid/${item.id}`, { state: { artwork: item } });
+      navigate(`/bid/${item.id}`, { state: { artwork: item } }); // ✔ FIXED
     } else {
       setShowLoginMsgFor(itemId);
     }
@@ -66,6 +82,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
           <h2>{title}</h2>
           <p>{subtitle}</p>
         </div>
+
         <NavLink to="/Collection" className="view-all">
           View All →
         </NavLink>
@@ -75,17 +92,22 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
         {items.map((item) => (
           <div className="carousel-card" key={item.id}>
             <div className="card-img-wrapper">
-              <img src={`./${itemsPrefix}${item.id}.jpg`} alt={item.title} />
+              {/* ✔ FIXED IMAGE PATH */}
+              <img
+                src={`/${itemsPrefix}${item.id}.jpg`}
+                alt={item.title}
+              />
             </div>
 
             <div className="card-content left-align">
               <div className="art-details">
                 <h3 className="art-title">{item.title}</h3>
                 <p className="artist-meta">
-                  {item.artist} | Current Bid: {item.bid}
+                  {item.artist} | Base Price: {item.bid}
                 </p>
               </div>
 
+              {/* BID BUTTON */}
               <button
                 className="bid-btn"
                 onClick={() => handleBidClick(item.id, item)}
@@ -93,6 +115,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
                 Bid Now
               </button>
 
+              {/* SHOW LOGIN MESSAGE ONLY FOR THIS ITEM */}
               {showLoginMsgFor === item.id && !isLoggedIn && (
                 <p
                   style={{

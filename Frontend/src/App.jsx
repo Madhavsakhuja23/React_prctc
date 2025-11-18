@@ -16,10 +16,12 @@ import BidDetail from './components/Bid/Biddetail'
 import SignUp from "./components/Authorization/Signup" 
 import Login from "./components/Authorization/Login"
 import ForgotPassword from "./components/Authorization/Forgot"
-import Otp from './components/Authorization/Otp'
+// import Otp from './components/Authorization/Otp'
 import Chatbot from './components/Chatbot/Chatbot'
 import BidHistory from './components/Bid/BidHistory'
 import Payment from './components/Bid/Payment'
+import UploadAuction from './components/Auction/uploadAuction'
+import DynamicAuctionDetail from './components/Auction/DynamicAuctionDetail'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -54,7 +56,25 @@ const Router= createBrowserRouter([
     element:<>
     <AuctionDetail />
     </>
-  },{
+  }
+  // ,{
+  //   path:"/auction/u:id",
+  //   element:<>
+  //   <AuctionDetail />
+  //   </>
+  // },{
+  //   path:"/auction/p:id",
+  //   element:<>
+  //   <AuctionDetail />
+  //   </>
+  // },{
+  //   path:"/auction/:id",
+  //   element:<>
+  //   <DynamicAuctionDetail />
+  //   </>
+  // },
+  ,
+  {
     path:"/bid/:id",
     element:<>
     <BidDetail />
@@ -82,15 +102,22 @@ const Router= createBrowserRouter([
     element:<>
     <ForgotPassword />
     </>
-  },{
-    path:"/otp",
-    element:<>
-    <Otp />
-    </>
-  },{
+  },
+  // {
+  //   path:"/otp",
+  //   element:<>
+  //   <Otp />
+  //   </>
+  // },
+  {
     path:"/payment",
     element:<>
     <Payment />
+    </>
+  },{
+    path:"/upload",
+    element:<>
+    <UploadAuction />
     </>
   }
 ])

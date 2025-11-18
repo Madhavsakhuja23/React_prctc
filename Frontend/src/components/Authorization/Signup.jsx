@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {toast} from "sonner"
+import { toast } from "sonner"
 import "./Signup.css";
 
 function SignUp() {
@@ -165,12 +165,27 @@ function SignUp() {
     const isRoleValid = validateRole();
 
     if (isNameValid && isEmailValid && isPwdValid && isCaptchaValid && isRoleValid) {
-      toast.success("Account Succesfully Created");
-      localStorage.setItem("Firstname", formData.fn);
-      localStorage.setItem("email", formData.email);
-      localStorage.setItem("password", formData.pwd);
-      localStorage.setItem("role", formData.role); // 👈 save role
-      navigate("/login");
+      try {
+        const res = await fetch("http://localhost:5000/api/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 201) {
+          toast.success("Account Successfully Created");
+          navigate("/login");
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Server error. Try again later.");
+      }
     }
   };
 

@@ -1,12 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import "./AuctionDetail.css";
 
-function AuctionDetail() {
-    const { id } = useParams();
-    const [reminderSet, setReminderSet] = useState(false);
+export default function AuctionDetail() {
+  const { id } = useParams();
+  const [dynamicArt, setDynamicArt] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [zoom, setZoom] = useState(false);
+  const [bidAmount, setBidAmount] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [buttonClicked, setButtonClicked] = useState(false);
 
-    const auctionData = {
+  // --------------------------
+  //        STATIC DATA
+  // --------------------------
+  const staticData = {
         u1: { title: 'Celestial Dreams', description: 'Futuristic artworks for visionaries.', imageUrl: '/upcoming1.jpg', type: 'upcoming' },
         u2: { title: 'Next Wave', description: 'Emerging trends and new talents.', imageUrl: '/upcoming2.jpg', type: 'upcoming' },
         u3: { title: 'Radiant Meadows', description: 'Nature-themed works by young modernists.', imageUrl: '/upcoming3.jpg', type: 'upcoming' },
@@ -310,468 +319,253 @@ function AuctionDetail() {
             ]
         },
     };
+  const staticArt = staticData[id];
 
-    const auction = auctionData[id];
-
-    if (!auction) {
-        return <div>Auction not found</div>;
+  // --------------------------
+  //   ALWAYS FETCH DYNAMIC
+  // --------------------------
+  useEffect(() => {
+    let cancelled = false;
+    async function loadDynamicArt() {
+      setLoading(true);
+      try {
+        const res = await fetch(`http://localhost:5000/api/artworks/${id}`);
+        if (!cancelled) {
+          if (res.ok) {
+            const data = await res.json();
+            // Normalize keys: backend might use image, title, desc
+            setDynamicArt({
+              title: data.title || data.name || "",
+              desc: data.desc || data.description || data.details || "",
+              image: data.image || data.imageUrl || data.img || "",
+              basePrice: data.basePrice || data.price || data.base_price || null,
+              status: data.status || data.type || null,
+              _id: data._id || data.id || null
+            });
+          } else {
+            setDynamicArt(null);
+          }
+        }
+      } catch (err) {
+        if (!cancelled) setDynamicArt(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
-    if (auction.type === 'current') {
-        return <CurrentAuctionDetail auction={auction} />;
-    }
+    // Only try to fetch if id doesn't look like a static key (optional; but safe)
+    // We always attempt fetch so dynamic entries will show if available.
+    loadDynamicArt();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
-    if (auction.type === 'past') {
-        return <PastAuctionDetail auction={auction} />;
-    }
-
+  // --------------------------
+  //        LOADING SCREEN
+  // --------------------------
+  if (loading) {
     return (
-        <div className="auction-detail">
-            <h1>{auction.title}</h1>
-            <img src={auction.imageUrl} alt={auction.title} />
-            <p>{auction.description}</p>
-            {auction.type === 'upcoming' && (
-                <div>
-                    <button className="bid-btn" onClick={() => setReminderSet(true)}>Set Reminder</button>
-                    {reminderSet && <p>You will be updated soon.</p>}
-                </div>
-            )}
-        </div>
+      <div className="ad-loading">
+        <div className="ad-loader" />
+        <p>Loading artwork...</p>
+      </div>
     );
+  }
+
+  // --------------------------
+  //   PRIORITY: STATIC > DYNAMIC
+  // --------------------------
+  if (staticArt) {
+    return (
+      <AuctionDetailUI
+        art={{
+          title: staticArt.title,
+          description: staticArt.description,
+          imageUrl: staticArt.imageUrl,
+          type: staticArt.type,
+          artistName: staticArt.artistName,
+          artistImage: staticArt.artistImage,
+          exhibitions: staticArt.exhibitions,
+          topBids: staticArt.topBids || [],
+          minBid: staticArt.minBid || null
+        }}
+      />
+    );
+  }
+
+  // --------------------------
+  //       DYNAMIC ART
+  // --------------------------
+  if (dynamicArt && dynamicArt._id) {
+    return (
+      <AuctionDetailUI
+        art={{
+          title: dynamicArt.title,
+          description: dynamicArt.desc,
+          imageUrl: dynamicArt.image,
+          type: dynamicArt.status || "current",
+          artistName: dynamicArt.artistName || "Seller",
+          artistImage: dynamicArt.artistImage || null,
+          exhibitions: dynamicArt.exhibitions || "",
+          topBids: dynamicArt.topBids || [],
+          minBid: dynamicArt.basePrice || null,
+          raw: dynamicArt
+        }}
+      />
+    );
+  }
+
+  // --------------------------
+  //        NOT FOUND
+  // --------------------------
+  return (
+    <div className="ad-notfound">
+      <h2>Artwork not found</h2>
+      <p>We couldn't find that artwork in the catalogue.</p>
+      <Link to="/Auction" className="ad-back">
+        ← Back to Auctions
+      </Link>
+    </div>
+  );
 }
 
-function CurrentAuctionDetail({ auction }) {
-    const [countdown, setCountdown] = useState('02:15:30');
-    const [zoomScale, setZoomScale] = useState(1);
-    const [zoomOrigin, setZoomOrigin] = useState('center center');
-    const [subject, setSubject] = useState('');
-    const [message, setMessage] = useState('');
-    const [bidAmount, setBidAmount] = useState('');
-    const [buttonClicked, setButtonClicked] = useState(false);
+// ---------- UI PRESENTATION (shared for static + dynamic) ----------
+function AuctionDetailUI({ art }) {
+  const [zoom, setZoom] = useState(false);
+  const [countdown, setCountdown] = useState("02:15:30");
+  const [bidAmount, setBidAmount] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [clicked, setClicked] = useState(false);
 
-    useEffect(() => {
-        const auctionEnd = new Date().getTime() + (2 * 60 * 60 * 1000 + 15 * 60 * 1000 + 30 * 1000); // 2h 15m 30s
+  // small countdown demo (2h 15m 30s)
+  useEffect(() => {
+    const auctionEnd = Date.now() + 2 * 60 * 60 * 1000 + 15 * 60 * 1000 + 30 * 1000;
+    const t = setInterval(() => {
+      const diff = auctionEnd - Date.now();
+      if (diff <= 0) {
+        setCountdown("Auction Closed");
+        clearInterval(t);
+        return;
+      }
+      const hrs = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      setCountdown(`${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`);
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
 
-        const updateCountdown = setInterval(() => {
-            const now = new Date().getTime();
-            const diff = auctionEnd - now;
+  const animateButton = () => {
+    setClicked(true);
+    setTimeout(() => setClicked(false), 420);
+  };
 
-            if (diff <= 0) {
-                clearInterval(updateCountdown);
-                setCountdown('Auction Closed');
-                return;
-            }
+  const submitMessage = () => {
+    animateButton();
+    // placeholder - integrate API if needed
+    alert("Message sent to artist (demo)");
+    setSubject("");
+    setMessage("");
+  };
 
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  const submitBid = () => {
+    animateButton();
+    // placeholder - integrate API if needed
+    alert(`Bid of ${bidAmount || "—"} submitted (demo)`);
+    setBidAmount("");
+  };
 
-            setCountdown(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
-        }, 1000);
+  return (
+    <div className="ad-wrap">
+      <h1 className="ad-title">{art.title}</h1>
 
-        return () => clearInterval(updateCountdown);
-    }, []);
-
-    const handleMouseMove = (e) => {
-        const rect = e.target.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const xPercent = (x / rect.width) * 100;
-        const yPercent = (y / rect.height) * 100;
-        setZoomOrigin(`${xPercent}% ${yPercent}%`);
-    };
-
-    const handleMouseEnter = () => {
-        setZoomScale(2);
-    };
-
-    const handleMouseLeave = () => {
-        setZoomScale(1);
-        setZoomOrigin('center center');
-    };
-
-    const animateButton = () => {
-        setButtonClicked(true);
-        setTimeout(() => setButtonClicked(false), 600);
-    };
-
-    const handleSendMessage = () => {
-        animateButton();
-    };
-
-    const handleSubmitBid = () => {
-        animateButton();
-    };
-
-    return (
-        <div>
-            <h1>{auction.title}</h1>
-
-            <div className="first-section">
-                <div className="left-column">
-                    <div
-                        className="art-preview"
-                        onMouseMove={handleMouseMove}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <img
-                            src={auction.imageUrl}
-                            alt={auction.title}
-                            style={{
-                                transform: `scale(${zoomScale})`,
-                                transformOrigin: zoomOrigin,
-                                transition: 'transform 0.2s ease',
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="right-column">
-                    <div className="info-card">
-                        <div className="info-section timer">
-                            Auction ends in: <span id="countdown">{countdown}</span>
-                        </div>
-
-                        <div className="info-section">
-                            <h3>Bidding Guidelines</h3>
-                            <ul>
-                                <li>Minimum bid increment: $50</li>
-                                <li>Bidding closes at the time shown on the timer</li>
-                                <li>Winners will be notified via registered email</li>
-                            </ul>
-                        </div>
-
-                        <div className="info-section artist">
-                            <h3>Artist Info</h3>
-                            <div className="artist-flex">
-                                <img src={auction.artistImage} alt="Artist Profile" />
-                                <div>
-                                    <p><strong>Name:</strong> {auction.artistName}</p>
-                                    <p><strong>Exhibitions:</strong> {auction.exhibitions}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="info-section bids">
-                            <h3>Top 3 Bids</h3>
-                            <ul>
-                                {auction.topBids.map((bid, index) => (
-                                    <li key={index}>
-                                        <strong>{bid.name}</strong> — ${bid.amount} <em>({bid.time})</em>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="second-section">
-                <div className="section description">
-                    <h3>About the Art</h3>
-                    <p>{auction.description}</p>
-                </div>
-
-                <div className="section message-artist">
-                    <h3>Message the Artist</h3>
-                    <input
-                        type="text"
-                        placeholder="Subject"
-                        maxLength="50"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                    />
-                    <textarea
-                        placeholder="Ask the artist about their work (max 300 characters)"
-                        maxLength="300"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <button
-                        className={buttonClicked ? 'clicked' : ''}
-                        onClick={handleSendMessage}
-                    >
-                        Send Message
-                    </button>
-                </div>
-
-                <div className="section place-bid">
-                    <h3>Place Your Bid</h3>
-                    <input
-                        type="number"
-                        placeholder="Enter bid amount"
-                        min={auction.minBid}
-                        value={bidAmount}
-                        onChange={(e) => setBidAmount(e.target.value)}
-                        required
-                    />
-                    <button
-                        className={buttonClicked ? 'clicked' : ''}
-                        onClick={handleSubmitBid}
-                    >
-                        Submit Bid
-                    </button>
-                </div>
-
-                <div className="back-link">
-                    <Link to="/">← Back to Auctions</Link>
-                </div>
-            </div>
+      <div className="ad-first">
+        <div
+          className={`ad-image-wrap ${zoom ? "zoomed" : ""}`}
+          onMouseEnter={() => setZoom(true)}
+          onMouseLeave={() => setZoom(false)}
+          onClick={() => setZoom((z) => !z)}
+          aria-hidden
+        >
+          <img src={art.imageUrl} alt={art.title} className="ad-image" />
+          <div className="ad-zoom-hint">{zoom ? "Click to close" : "Hover to zoom • Click to enlarge"}</div>
         </div>
-    );
-}
 
-function PastAuctionDetail({ auction }) {
-    return (
-        <div style={{
-            fontFamily: "'Helvetica Neue', sans-serif",
-            backgroundColor: "#f5efe6",
-            color: "#4b3f33",
-            margin: 0,
-            padding: "24px",
-            lineHeight: 1.6
-        }}>
-            <div style={{
-                maxWidth: "940px",
-                margin: "0 auto",
-                background: "white",
-                padding: "2rem 2.2rem",
-                borderRadius: "14px",
-                boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
-            }}>
-                <div style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "2.2rem",
-                    marginBottom: "2rem",
-                    alignItems: "flex-start"
-                }}>
-                    <div style={{
-                        flex: "1 1 300px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "flex-start",
-                        marginBottom: "20px"
-                    }}>
-                        <img
-                            src={auction.imageUrl}
-                            alt={`Oil painting '${auction.title}' by ${auction.artist} (${auction.year})`}
-                            style={{
-                                maxWidth: "100%",
-                                height: "auto",
-                                objectFit: "cover",
-                                borderRadius: 0,
-                                boxShadow: "0 6px 20px rgba(0,0,0,0.22)",
-                                background: "#d8cfc3"
-                            }}
-                        />
-                    </div>
-                    <div style={{ flex: "1 1 500px" }}>
-                        <h1 style={{
-                            fontFamily: "'Georgia', serif",
-                            color: "#5a4632",
-                            marginTop: 0,
-                            marginBottom: "1.1rem",
-                            fontSize: "2rem"
-                        }}>{auction.title}</h1>
-                        <div style={{
-                            background: "#f9f5ee",
-                            borderRadius: "8px",
-                            padding: "1rem 1.2rem",
-                            marginBottom: "1.2rem",
-                            fontStyle: "italic",
-                            color: "#7a6c5d",
-                            fontSize: "1.05em"
-                        }}>
-                            <strong>{auction.title}</strong> is a landmark artwork, celebrated for its masterful technique and evocative portrayal of a pivotal era in art history.
-                        </div>
-                        <div style={{ marginBottom: "1.2rem" }}>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Artist:</strong> {auction.artist}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Medium:</strong> {auction.medium}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Dimensions:</strong> {auction.dimensions}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Year:</strong> {auction.year}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Description:</strong> {auction.description}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Auction Date:</strong> {auction.auctionDate}</p>
-                            <p style={{ margin: "0.5rem 0", fontSize: "1.07rem" }}><strong>Estimate Price:</strong> {auction.estimatePrice}</p>
-                        </div>
-                    </div>
-                </div>
+        <aside className="ad-side">
+          <div className="ad-timer">
+            <strong>Auction ends in:</strong>
+            <div className="ad-countdown">{countdown}</div>
+          </div>
 
-                <h2 style={{
-                    fontFamily: "'Georgia', serif",
-                    color: "#5a4632",
-                    marginTop: "2.2rem",
-                    marginBottom: "0.9rem"
-                }}>Auction Results</h2>
-                <table style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    margin: "1.1rem 0 1.8rem 0",
-                    display: "block",
-                    overflowX: "auto",
-                    whiteSpace: "nowrap"
-                }}>
-                    <caption style={{
-                        textAlign: "left",
-                        fontStyle: "italic",
-                        color: "#7a6c5d",
-                        padding: "0.5rem 0"
-                    }}>
-                        Auction results for {auction.title} and related works.
-                    </caption>
-                    <thead>
-                        <tr>
-                            <th style={{
-                                border: "1px solid #ddd",
-                                padding: "0.78rem 1rem",
-                                textAlign: "left",
-                                backgroundColor: "#8b6f47",
-                                color: "white",
-                                fontSize: "1rem"
-                            }}>Lot Number</th>
-                            <th style={{
-                                border: "1px solid #ddd",
-                                padding: "0.78rem 1rem",
-                                textAlign: "left",
-                                backgroundColor: "#8b6f47",
-                                color: "white",
-                                fontSize: "1rem"
-                            }}>Title</th>
-                            <th style={{
-                                border: "1px solid #ddd",
-                                padding: "0.78rem 1rem",
-                                textAlign: "left",
-                                backgroundColor: "#8b6f47",
-                                color: "white",
-                                fontSize: "1rem"
-                            }}>Medium</th>
-                            <th style={{
-                                border: "1px solid #ddd",
-                                padding: "0.78rem 1rem",
-                                textAlign: "left",
-                                backgroundColor: "#8b6f47",
-                                color: "white",
-                                fontSize: "1rem"
-                            }}>Hammer Price</th>
-                            <th style={{
-                                border: "1px solid #ddd",
-                                padding: "0.78rem 1rem",
-                                textAlign: "left",
-                                backgroundColor: "#8b6f47",
-                                color: "white",
-                                fontSize: "1rem"
-                            }}>Buyer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {auction.relatedLots.map((lot, index) => (
-                            <tr key={index} style={{ backgroundColor: index % 2 === 0 ? "transparent" : "#f1ebe3" }}>
-                                <td style={{
-                                    border: "1px solid #ddd",
-                                    padding: "0.78rem 1rem",
-                                    textAlign: "left",
-                                    whiteSpace: "nowrap"
-                                }} data-label="Lot Number">{lot.lotNumber}</td>
-                                <td style={{
-                                    border: "1px solid #ddd",
-                                    padding: "0.78rem 1rem",
-                                    textAlign: "left",
-                                    whiteSpace: "nowrap"
-                                }} data-label="Title">{lot.title}</td>
-                                <td style={{
-                                    border: "1px solid #ddd",
-                                    padding: "0.78rem 1rem",
-                                    textAlign: "left",
-                                    whiteSpace: "nowrap"
-                                }} data-label="Medium">{lot.medium}</td>
-                                <td style={{
-                                    border: "1px solid #ddd",
-                                    padding: "0.78rem 1rem",
-                                    textAlign: "left",
-                                    whiteSpace: "nowrap"
-                                }} data-label="Hammer Price">{lot.hammerPrice}</td>
-                                <td style={{
-                                    border: "1px solid #ddd",
-                                    padding: "0.78rem 1rem",
-                                    textAlign: "left",
-                                    whiteSpace: "nowrap"
-                                }} data-label="Buyer">{lot.buyer}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+          <section className="ad-panel">
+            <h3>Bidding Guidelines</h3>
+            <ul>
+              <li>Minimum bid increment: $50</li>
+              <li>Bidding closes when the timer runs out</li>
+              <li>Winners notified via registered email</li>
+            </ul>
+          </section>
 
-                <div style={{
-                    background: "#f9f5ee",
-                    color: "#7a6c5d",
-                    padding: "0.8rem 1.2rem",
-                    borderRadius: "8px",
-                    fontSize: "0.99em",
-                    marginBottom: "2rem"
-                }}>
-                    <strong>Note:</strong> Final hammer price excludes buyer's premium and taxes. Contact auction house for detailed invoice.
-                </div>
-
-                <h2 style={{
-                    fontFamily: "'Georgia', serif",
-                    color: "#5a4632",
-                    marginTop: "2.2rem",
-                    marginBottom: "0.9rem"
-                }}>Provenance</h2>
-                <ul>
-                    {auction.provenance.map((item, index) => (
-                        <li key={index}>{item}</li>
-                    ))}
-                </ul>
-
-                <h2 style={{
-                    fontFamily: "'Georgia', serif",
-                    color: "#5a4632",
-                    marginTop: "2.2rem",
-                    marginBottom: "0.9rem"
-                }}>Exhibition History</h2>
-                <ul>
-                    {auction.exhibitionHistory.map((item, index) => (
-                        <li key={index}>{item}</li>
-                    ))}
-                </ul>
-
-                <h2 style={{
-                    fontFamily: "'Georgia', serif",
-                    color: "#5a4632",
-                    marginTop: "2.2rem",
-                    marginBottom: "0.9rem"
-                }}>Literature</h2>
-                <ul>
-                    {auction.literature.map((item, index) => (
-                        <li key={index}>{item}</li>
-                    ))}
-                </ul>
-
-                <NavLink
-                    to="/Auction"
-                    style={{
-                        display: "inline-block",
-                        background: "#8b6f47",
-                        color: "white",
-                        textDecoration: "none",
-                        padding: "0.75rem 1.5rem",
-                        borderRadius: "8px",
-                        fontWeight: "bold",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                        transition: "background 0.3s ease, transform 0.2s ease"
-                    }}
-                    onMouseOver={(e) => e.target.style.background = "#755a39"}
-                    onMouseOut={(e) => e.target.style.background = "#8b6f47"}
-                    onMouseDown={(e) => e.target.style.transform = "translateY(2px)"}
-                    onMouseUp={(e) => e.target.style.transform = "translateY(0)"}
-                >
-                    ← Back to Auctions
-                </NavLink>
+          <section className="ad-panel artist">
+            <h3>Artist Info</h3>
+            <div className="artist-row">
+              <div className="artist-avatar">
+                {art.artistImage ? (
+                  <img src={art.artistImage} alt={art.artistName} />
+                ) : (
+                  <div className="avatar-fallback">{(art.artistName || "A").split(" ").map(w => w[0]).slice(0,2).join("")}</div>
+                )}
+              </div>
+              <div>
+                <div className="artist-name"><strong>Name:</strong> {art.artistName}</div>
+                <div className="artist-exh"><strong>Exhibitions:</strong> {art.exhibitions || "—"}</div>
+              </div>
             </div>
-        </div>
-    );
-}
+          </section>
 
-export default AuctionDetail;
+          <section className="ad-panel bids">
+            <h3>Top 3 Bids</h3>
+            <ul>
+              {art.topBids && art.topBids.length ? (
+                art.topBids.map((b, i) => (
+                  <li key={i}>
+                    <strong>{b.name}</strong> — ${b.amount} <em>({b.time})</em>
+                  </li>
+                ))
+              ) : (
+                <li>No bids yet</li>
+              )}
+            </ul>
+            {art.minBid && <div className="minbid">Minimum next bid: <strong>₹{art.minBid}</strong></div>}
+          </section>
+        </aside>
+      </div>
+
+      <div className="ad-second">
+        <section className="ad-card about">
+          <h3>About the Art</h3>
+          <p>{art.description}</p>
+        </section>
+
+        <section className="ad-card message-artist">
+          <h3>Message the Artist</h3>
+          <input placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+          <textarea placeholder="Ask the artist about their work (max 300 characters)" value={message} onChange={(e) => setMessage(e.target.value)} maxLength={300} />
+          <button className={`ad-btn ${clicked ? "clicked" : ""}`} onClick={submitMessage}>Send Message</button>
+        </section>
+
+        <section className="ad-card place-bid">
+          <h3>Place Your Bid</h3>
+          <input type="number" placeholder="Enter bid amount" min={art.minBid || 1} value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} />
+          <button className={`ad-btn ${clicked ? "clicked" : ""}`} onClick={submitBid}>Submit Bid</button>
+        </section>
+
+        <div className="back-link">
+          <Link to="/Auction">← Back to Auctions</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
