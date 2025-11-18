@@ -9,7 +9,7 @@ export default function DynamicAuctionDetail() {
   useEffect(() => {
     async function loadArtwork() {
       try {
-        const res = await fetch(`http://localhost:5000/api/artworks/${id}`);
+        const res = await fetch(`https://aurtistiq.onrender.com/api/artworks/${id}`);
         const data = await res.json();
         setArtwork(data);
       } catch (err) {

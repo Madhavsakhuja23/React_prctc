@@ -15,7 +15,7 @@ export default function Auctions() {
   useEffect(() => {
     async function loadArt() {
       try {
-        const res = await fetch("http://localhost:5000/api/artworks/all");
+        const res = await fetch("https://aurtistiq.onrender.com/api/artworks/all");
         const data = await res.json();
         setUploadedArtworks(data);
       } catch (err) {

@@ -329,7 +329,7 @@ export default function AuctionDetail() {
     async function loadDynamicArt() {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/api/artworks/${id}`);
+        const res = await fetch(`https://aurtistiq.onrender.com/api/artworks/${id}`);
         if (!cancelled) {
           if (res.ok) {
             const data = await res.json();

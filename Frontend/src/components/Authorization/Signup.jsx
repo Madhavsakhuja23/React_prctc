@@ -166,7 +166,7 @@ function SignUp() {
 
     if (isNameValid && isEmailValid && isPwdValid && isCaptchaValid && isRoleValid) {
       try {
-        const res = await fetch("http://localhost:5000/api/users/register", {
+        const res = await fetch("https://aurtistiq.onrender.com/api/users/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

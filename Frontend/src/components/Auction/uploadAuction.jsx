@@ -42,7 +42,7 @@ const handleSubmit = async (e) => {
   };
 
   try {
-    const res = await fetch("http://localhost:5000/api/artworks/upload", {
+    const res = await fetch("https://aurtistiq.onrender.com/api/artworks/upload", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
