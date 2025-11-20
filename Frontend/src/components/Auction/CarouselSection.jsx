@@ -119,7 +119,7 @@ export default function CarouselSection({ title, subtitle, itemsPrefix = "c" }) 
               {showLoginMsgFor === item.id && !isLoggedIn && (
                 <p
                   style={{
-                    color: "red",
+                    color: "#7a6c5d",
                     fontSize: "0.9rem",
                     marginTop: "5px",
                     transition: "opacity 0.3s ease",

@@ -186,7 +186,7 @@ const Login = () => {
 
                 <div id="error">{err}</div>
 
-                <button type="submit">Verify OTP</button>
+                <button type="submit" className="otp">Verify OTP</button>
               </form>
             </div>
           )}

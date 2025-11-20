@@ -26,43 +26,43 @@ export default function UploadAuction() {
     reader.readAsDataURL(file);
   };
 
-  
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  const seller = JSON.parse(localStorage.getItem("user"));
-  if (!seller) {
-    toast.error("You must be logged in to upload artwork");
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const dataToSend = {
-    ...formData,
-    sellerId: seller.id, // user _id from backend
-  };
-
-  try {
-    const res = await fetch("https://aurtistiq.onrender.com/api/artworks/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataToSend),
-    });
-
-    const data = await res.json();
-
-    if (res.status === 201) {
-      toast.success("🎨 Artwork Uploaded Successfully!");
-      navigate("/");
-    } else {
-      toast.error(data.message);
+    const seller = JSON.parse(localStorage.getItem("user"));
+    if (!seller) {
+      toast.error("You must be logged in to upload artwork");
+      return;
     }
-  } catch (err) {
-    console.error("Upload error:", err);
-    toast.error("Server error! Please try again.");
-  }
-};
+
+    const dataToSend = {
+      ...formData,
+      sellerId: seller.id, // user _id from backend
+    };
+
+    try {
+      const res = await fetch("https://aurtistiq.onrender.com/api/artworks/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 201) {
+        toast.success("🎨 Artwork Uploaded Successfully!");
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Server error! Please try again.");
+    }
+  };
 
 
   return (
@@ -132,6 +132,14 @@ const handleSubmit = async (e) => {
           Upload Auction
         </button>
       </form>
+      <button
+        type="button"
+        className="back-btn"
+        onClick={() => navigate("/")}
+      >
+        ← Back to Home
+      </button>
+
     </div>
   );
 }

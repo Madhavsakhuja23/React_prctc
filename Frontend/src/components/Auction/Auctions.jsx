@@ -7,9 +7,13 @@ import { useNavigate } from "react-router-dom";
 export default function Auctions() {
   const [activeTab, setActiveTab] = useState("curators");
   const [auctionTab, setAuctionTab] = useState("current");
-
+  const [closedIndex, setClosedIndex] = useState(null);
   const [uploadedArtworks, setUploadedArtworks] = useState([]); // ⭐ DYNAMIC DATA
   const navigate = useNavigate();
+
+  const showResult = (index) => {
+    setClosedIndex(index);
+  };
 
   // ⭐ Fetch artworks from backend
   useEffect(() => {
@@ -160,7 +164,7 @@ export default function Auctions() {
                 img={item.image}
                 title={item.title}
                 desc={item.desc}
-                cta={() => {}}
+                cta={() => { }}
                 ctaLabel="Coming Soon"
               />
             ))}
@@ -209,7 +213,23 @@ export default function Auctions() {
                 <img src={`./${img}`} alt="" />
                 <div className="card-content">
                   <h3>Past Art {i + 1}</h3>
-                  <button className="bid-btn">View Results</button>
+                  <button className="bid-btn" onClick={() => showResult(i)}>
+                    View Results
+                  </button>
+
+                  {closedIndex === i && (
+                    <p
+                      style={{
+                        color: "#7a6c5d",
+                        fontSize: "0.9rem",
+                        marginTop: "5px",
+                        transition: "opacity 0.3s ease",
+                      }}
+                    >
+                      Auction is Closed
+                    </p>
+                  )}
+
                 </div>
               </div>
             ))}

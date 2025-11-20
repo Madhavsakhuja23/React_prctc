@@ -76,7 +76,7 @@ input[type="password"] {
   outline: none;
 }
 
-input[type="submit"] {
+input[type="submit"], .otp{
   background-color: #4b3f33;
   color: #fff;
   border: none;
@@ -87,7 +87,7 @@ input[type="submit"] {
   transition: background 0.3s;
 }
 
-input[type="submit"]:hover {
+input[type="submit"]:hover .otp:hover{
   background-color: #3a322b;
 }
 

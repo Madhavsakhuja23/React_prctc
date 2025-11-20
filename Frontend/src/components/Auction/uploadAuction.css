@@ -96,3 +96,19 @@ textarea {
 .upload-btn:hover {
   background-color: #5a4632;
 }
+.back-btn {
+  margin-top: 15px;
+  padding: 10px 18px;
+  background: #f3e8da;
+  color: #7a6c5d;
+  border: 1px solid #d5c3a8;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+}
+
+.back-btn:hover {
+  background: #e5d3bd;
+}
