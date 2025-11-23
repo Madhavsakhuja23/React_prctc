@@ -167,9 +167,10 @@ function Fcollection() {
     if (!userId) return false;
     try {
       // DELETE route: /api/wishlist/:userId/:artworkId
-      const res = await fetch(`${API_BASE}/api/wishlist/${userId}/${encodeURIComponent(String(artworkId))}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`${API_BASE}/api/wishlist/remove/${artId}`, {
+  method: "DELETE"
+});
+
       if (!res.ok) {
         const body = await res.text();
         console.warn("Remove wishlist failed:", res.status, body);

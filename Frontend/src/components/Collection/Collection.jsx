@@ -155,10 +155,10 @@ function Collection() {
   // ---------------------------
   const removeFromWishlist = async (artId) => {
     try {
-      const res = await fetch(
-        `${API_BASE}/api/wishlist/${userId}/${artId}`,
-        { method: "DELETE" }
-      );
+      const res = await fetch(`${API_BASE}/api/wishlist/remove/${artId}`, {
+  method: "DELETE"
+});
+
       return res.ok;
     } catch (err) {
       console.error("Remove wishlist error:", err);
