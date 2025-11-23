@@ -1,4 +1,4 @@
-// SellerDashboard.jsx (updated)
+// SellerDashboard.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -13,7 +13,7 @@ import {
 import { User, Package, Clock, TrendingUp, Edit2, X, Check } from "lucide-react";
 import './SellerDashboard.css';
 
-const API_BASE = "https://aurtistiq.onrender.com"; // keep your API base
+const API_BASE = process.env.REACT_APP_API_BASE || "https://aurtistiq.onrender.com";
 const initialSalesData = [
   { month: "Jan", sold: 2 },
   { month: "Feb", sold: 5 },
@@ -23,8 +23,8 @@ const initialSalesData = [
   { month: "Jun", sold: 6 }
 ];
 
-// Default avatar path (the uploaded asset from your environment)
-const DEFAULT_AVATAR = "/mnt/data/95dbd176-aeee-4a5e-bb39-59d0e07d6992.png";
+// Default avatar in public folder
+const DEFAULT_AVATAR = "/default-avatar.png";
 
 export default function SellerDashboard() {
   const [showModal, setShowModal] = useState(false);
@@ -44,7 +44,7 @@ export default function SellerDashboard() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loadingSave, setLoadingSave] = useState(false);
 
-  // read userId from localStorage (the same shape you used)
+  // read user from localStorage (robust)
   const user = (() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -54,7 +54,7 @@ export default function SellerDashboard() {
 
   useEffect(() => {
     if (!userId) {
-      // no user -> keep default
+      console.warn("No user ID found in localStorage.");
       return;
     }
     let mounted = true;
@@ -63,6 +63,7 @@ export default function SellerDashboard() {
         const res = await fetch(`${API_BASE}/api/sellers/${encodeURIComponent(userId)}`);
         if (!res.ok) {
           console.warn("Failed to load seller profile", res.status);
+          // If 404, we can still show empty defaults
           return;
         }
         const data = await res.json();
@@ -116,8 +117,7 @@ export default function SellerDashboard() {
     reader.readAsDataURL(file);
   };
 
-  // Save: PUT to backend. If a file is selected we send the avatar as a base64 string (simple approach).
-  // In production you likely want a multipart upload to S3 / cloudinary or server-side file storage.
+  // Save: PUT to backend (upsert behavior server-side)
   const handleSave = async () => {
     if (!validateForm()) return;
     if (!userId) {
@@ -128,9 +128,6 @@ export default function SellerDashboard() {
     setLoadingSave(true);
     try {
       let avatarToSend = sellerData.avatar || DEFAULT_AVATAR;
-
-      // If user selected a file, we can send it as base64 (server stores the string),
-      // or you can implement a dedicated file endpoint. Here we send as dataURL.
       if (selectedFile && previewAvatar) {
         avatarToSend = previewAvatar; // data URL
       }

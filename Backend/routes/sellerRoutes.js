@@ -1,12 +1,11 @@
+// routes/sellerRoutes.js
 import express from "express";
-import { getSellerByUserId, updateSellerByUserId } from "../controllers/sellerController.js";
+import { getSeller, updateSeller } from "../controllers/sellerController.js";
 
 const router = express.Router();
 
-// GET /api/sellers/:userId
-router.get("/:userId", getSellerByUserId);
-
-// PUT /api/sellers/:userId
-router.put("/:userId", updateSellerByUserId);
+// Use userId as the route param because seller documents are keyed by userId
+router.get("/:userId", getSeller);
+router.put("/:userId", updateSeller);
 
 export default router;

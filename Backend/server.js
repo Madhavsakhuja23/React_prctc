@@ -1,3 +1,4 @@
+// server.js (your main file)
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -20,9 +21,12 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Body parser (VERY IMPORTANT)
+// Body parser (VERY IMPORTANT). Keep limit high while using data URL avatars.
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Serve public folder for static assets (default avatar)
+app.use(express.static("public"));
 
 // Debug incoming requests
 app.use((req, res, next) => {
