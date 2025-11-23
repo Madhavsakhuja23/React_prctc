@@ -24,6 +24,7 @@ import UploadAuction from './components/Auction/uploadAuction'
 import DynamicAuctionDetail from './components/Auction/DynamicAuctionDetail'
 import SellerHistory from './components/Auction/sellerHistory'
 import Wishlist from './components/Wishlist/WishList'
+import SellerDashboard from './components/Seller/SellerProfile'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -132,6 +133,11 @@ const Router= createBrowserRouter([
     <Navbar />
     <Wishlist />
     <Footer />
+    </>
+  },{
+    path:"/profile",
+    element:<>
+    <SellerDashboard />
     </>
   }
 ])
