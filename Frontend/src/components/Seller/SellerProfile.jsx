@@ -39,7 +39,7 @@ export default function SellerDashboard() {
   const [formData, setFormData] = useState({ name: "", bio: "" });
   const [errors, setErrors] = useState({});
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [previewAvatar, setPreviewAvatar] = useState("");
+  const [previewAvatar, setPreviewAvatar] = useState(DEFAULT_AVATAR);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loadingSave, setLoadingSave] = useState(false);
 
@@ -51,10 +51,12 @@ export default function SellerDashboard() {
     }
   })();
 
-  // IMPORTANT: Use ONLY _id (your DB primary key)
+  // Use ONLY the real MongoDB id
   const userId = user?._id;
 
-  // Fetch seller data
+  // ======================
+  // LOAD SELLER DATA
+  // ======================
   useEffect(() => {
     if (!userId) return;
 
@@ -94,20 +96,41 @@ export default function SellerDashboard() {
     return () => { mounted = false; };
   }, [userId]);
 
-  // Validation
+
+  // ======================
+  // INPUT HANDLER (FIXED)
+  // ======================
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
+  };
+
+
+  // ======================
+  // FORM VALIDATION
+  // ======================
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    else if (formData.name.trim().length < 2) newErrors.name = "Name must be at least 2 characters";
 
-    if (!formData.bio.trim()) newErrors.bio = "Bio is required";
-    else if (formData.bio.trim().length < 20) newErrors.bio = "Bio must be at least 20 characters";
+    if (!formData.name.trim())
+      newErrors.name = "Name is required";
+    else if (formData.name.trim().length < 2)
+      newErrors.name = "Name must be at least 2 characters";
+
+    if (!formData.bio.trim())
+      newErrors.bio = "Bio is required";
+    else if (formData.bio.trim().length < 20)
+      newErrors.bio = "Bio must be at least 20 characters";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Avatar preview
+
+  // ======================
+  // AVATAR PREVIEW
+  // ======================
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) {
@@ -115,13 +138,17 @@ export default function SellerDashboard() {
       setPreviewAvatar(sellerData.avatar);
       return;
     }
+
     setSelectedFile(file);
     const reader = new FileReader();
     reader.onload = () => setPreviewAvatar(reader.result);
     reader.readAsDataURL(file);
   };
 
-  // Save updated profile
+
+  // ======================
+  // SAVE PROFILE
+  // ======================
   const handleSave = async () => {
     if (!validateForm()) return;
     if (!userId) return alert("Not logged in");
@@ -129,10 +156,7 @@ export default function SellerDashboard() {
     setLoadingSave(true);
 
     try {
-      let avatarToSend = sellerData.avatar;
-      if (selectedFile && previewAvatar) {
-        avatarToSend = previewAvatar;
-      }
+      let avatarToSend = previewAvatar || sellerData.avatar;
 
       const body = {
         name: formData.name.trim(),
@@ -174,6 +198,8 @@ export default function SellerDashboard() {
     }
   };
 
+
+  // Close modal
   const handleCancel = () => {
     setFormData({ name: sellerData.name, bio: sellerData.bio });
     setPreviewAvatar(sellerData.avatar);
@@ -182,8 +208,11 @@ export default function SellerDashboard() {
     setShowModal(false);
   };
 
+
   return (
     <div className="dashboard-wrapper">
+
+      {/* HEADER */}
       <header className="dashboard-header">
         <div className="header-content">
           <h1 className="header-logo">ArtGallery</h1>
@@ -195,11 +224,12 @@ export default function SellerDashboard() {
       </header>
 
       <div className="dashboard-container">
+
         <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="dashboard-title">
           Seller Dashboard
         </motion.h2>
 
-        {/* Only Total Artworks card remains */}
+        {/* TOTAL ARTWORKS */}
         <div className="stats-grid">
           <motion.div className="stat-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="stat-card-header">
@@ -211,7 +241,7 @@ export default function SellerDashboard() {
           </motion.div>
         </div>
 
-        {/* Graph */}
+        {/* GRAPH */}
         <motion.div className="graph-container" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h3 className="graph-title">Monthly Sales Overview</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -225,7 +255,7 @@ export default function SellerDashboard() {
           </ResponsiveContainer>
         </motion.div>
 
-        {/* About Section */}
+        {/* ABOUT SELLER */}
         <motion.div className="profile-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h3 className="profile-title">About Seller</h3>
           <div className="profile-top">
@@ -234,6 +264,7 @@ export default function SellerDashboard() {
           </div>
         </motion.div>
 
+        {/* EDIT BUTTON */}
         <div className="edit-btn-wrapper">
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setShowModal(true)} className="edit-profile-btn">
             <Edit2 size={20} /> Edit Profile
@@ -241,17 +272,19 @@ export default function SellerDashboard() {
         </div>
       </div>
 
-      {/* Modal */}
+
+      {/* MODAL */}
       <AnimatePresence>
         {showModal && (
           <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleCancel}>
             <motion.div className="modal-box" initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }} onClick={(e) => e.stopPropagation()}>
+
               <div className="modal-header">
                 <h2 className="modal-title">Edit Seller Details</h2>
                 <button onClick={handleCancel} className="modal-close-btn"><X /></button>
               </div>
 
-              {/* Avatar */}
+              {/* AVATAR */}
               <div className="form-group">
                 <label className="form-label">Avatar</label>
                 <div className="avatar-row">
@@ -260,31 +293,33 @@ export default function SellerDashboard() {
                 </div>
               </div>
 
-              {/* Name */}
+              {/* NAME */}
               <div className="form-group">
                 <label className="form-label">Name</label>
                 <input type="text" name="name" value={formData.name} onChange={handleInputChange} className={`input-field ${errors.name ? "input-error" : ""}`} />
                 {errors.name && <p className="error-message">{errors.name}</p>}
               </div>
 
-              {/* Bio */}
+              {/* BIO */}
               <div className="form-group">
                 <label className="form-label">Bio</label>
                 <textarea name="bio" value={formData.bio} onChange={handleInputChange} rows={5} className={`input-field textarea-field ${errors.bio ? "input-error" : ""}`} />
                 {errors.bio && <p className="error-message">{errors.bio}</p>}
               </div>
 
-              {/* Actions */}
+              {/* ACTION BUTTONS */}
               <div className="modal-actions">
                 <motion.button onClick={handleCancel} className="cancel-btn">Cancel</motion.button>
                 <motion.button onClick={handleSave} className={`save-btn ${saveSuccess ? "save-btn-success" : ""}`} disabled={loadingSave}>
                   {loadingSave ? "Saving..." : saveSuccess ? (<><Check /> Saved!</>) : "Save Changes"}
                 </motion.button>
               </div>
+
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
     </div>
   );
 }
