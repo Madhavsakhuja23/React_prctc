@@ -1,0 +1,279 @@
+/* Edit Button (replaces heart) */
+.edit-btn {
+  background: #f5efe6;
+  color: #5a4632;
+  border: 1px solid #8b6f47;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #e5dbcf;
+}
+
+/* Delete Icon (floating X on top-right of image) */
+.delete-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 10;
+  color: #333;
+  transition: 0.2s ease;
+}
+
+.delete-icon:hover {
+  background: #ffdddd;
+  color: red;
+}
+.collect-header {
+  padding: 40px 40px;
+  text-align: left; 
+  color: #5a4632; 
+  margin-top: 80px; /* ✅ Add this line */
+}
+.collect-header h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+
+/* Artsy-style Artwork Grid */
+.artsy-grid-section {
+  padding: 2rem 4rem;
+}
+
+.artsy-masonry {
+  column-count: 4;
+  column-gap: 1.6rem;
+}
+
+.artsy-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  break-inside: avoid;
+  position: relative;
+  overflow: visible; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.image-wrapper {
+  overflow: hidden;
+  display: block;
+  position: relative;
+  border-radius: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+}
+
+.image-wrapper img {
+  width: 100%;
+  display: block;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.image-wrapper:hover img {
+  transform: scale(1.1) translateX(-3%);
+}
+
+.artsy-card-info {
+  margin-top: 0.5rem;
+}
+
+.artsy-card-info p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.artist-name {
+  font-weight: bold;
+}
+
+.art-title, .art-gallery {
+  color: #555;
+}
+
+.art-price {
+  color: #5a4632;
+  font-weight: 500;
+}
+@keyframes pop-heart {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+}
+
+/* Responsive Masonry */
+@media (max-width: 1200px) {
+  .artsy-masonry { column-count: 3; padding: 2rem 2rem; }
+}
+@media (max-width: 768px) {
+  .artsy-masonry { column-count: 2; padding: 2rem 1rem; }
+}
+@media (max-width: 480px) {
+  .artsy-masonry { column-count: 1; }
+}
+/* Search Highlight */
+.artsy-card.highlight .image-wrapper {
+  transform: translateY(-15px) scale(1.1); /* more lift and zoom */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  z-index: 10;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+
+.artsy-card.dim {
+  opacity: 0.4;
+  transform: scale(0.98);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.artist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.artist-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #222;
+}
+
+
+/* --- Overlay --- */
+.edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: overlayFade 0.25s ease forwards;
+}
+
+/* --- Modal Box --- */
+.edit-modal {
+  background: #f7f2ea;
+  padding: 25px;
+  width: 380px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  animation: artsyPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #5a4632;
+  font-weight: 500;
+}
+
+.edit-modal label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+  color: #5a4632;
+}
+
+.edit-modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #c7b8a4;
+  border-radius: 6px;
+  margin-top: 5px;
+  background: #fff;
+  font-size: 15px;
+}
+
+/* Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.cancel-btn {
+  padding: 8px 14px;
+  background: #ac927a;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save-btn {
+  padding: 8px 14px;
+  background: #5a4632;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* --- Artsy Motion Animations --- */
+@keyframes overlayFade {
+  from { background: rgba(0,0,0,0); }
+  to { background: rgba(0,0,0,0.45); }
+}
+
+@keyframes artsyPop {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+    filter: blur(3px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0px) scale(1.03);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+    filter: blur(0);
+  }
+}.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+.status-badge.current {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.status-badge.upcoming {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status-badge.past {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}

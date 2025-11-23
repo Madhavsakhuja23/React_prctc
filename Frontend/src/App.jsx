@@ -22,6 +22,7 @@ import BidHistory from './components/Bid/BidHistory'
 import Payment from './components/Bid/Payment'
 import UploadAuction from './components/Auction/uploadAuction'
 import DynamicAuctionDetail from './components/Auction/DynamicAuctionDetail'
+import SellerHistory from './components/Auction/sellerHistory'
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -118,6 +119,11 @@ const Router= createBrowserRouter([
     path:"/upload",
     element:<>
     <UploadAuction />
+    </>
+  },{
+    path:"/history",
+    element:<>
+    <SellerHistory />
     </>
   }
 ])

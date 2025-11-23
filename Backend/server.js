@@ -3,30 +3,43 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
-import authRoutes from "./routes/authRoutes.js";import artworkRoutes from "./routes/artworkRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import artworkRoutes from "./routes/artworkRoutes.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
-// import cors from "cors";
 
 app.use(cors({
-  origin: "*",  // or "https://your-vercel-domain"
-  credentials: true,
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-app.use(express.json());
+// Body parser (VERY IMPORTANT)
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
+// Debug incoming requests
+app.use((req, res, next) => {
+  console.log("🔥 Incoming:", req.method, req.url);
+  next();
+});
+
+// API routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/artworks", artworkRoutes);
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
+// IMPORTANT: API 404 handler MUST BE BEFORE app.listen
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
+// Server start
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
 );
