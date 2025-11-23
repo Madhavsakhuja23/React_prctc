@@ -135,8 +135,8 @@ function Navbar({ onSearch }) {
                   className="user-dropdown-menu"
                   onClick={(e) => e.stopPropagation()} // Keep dropdown open
                 >
-                  <NavLink to="/profile">View Profile</NavLink>
-                  <NavLink to="/settings">Settings</NavLink>
+                  {/* <NavLink to="/profile">View Profile</NavLink>
+                  <NavLink to="/settings">Settings</NavLink> */}
                   <NavLink to="/wishlist">Wishlist</NavLink>
 
                   <button
@@ -168,7 +168,7 @@ function Navbar({ onSearch }) {
           <>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/">Home</NavLink>
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/upload">Upload Artwork</NavLink>
-            <NavLink onClick={toggleMenu} className="dropdown-link" to="/live-auctions">Live Auctions</NavLink>
+            {/* <NavLink onClick={toggleMenu} className="dropdown-link" to="/live-auctions">Live Auctions</NavLink> */}
             <NavLink onClick={toggleMenu} className="dropdown-link" to="/history">History</NavLink>
           </>
         ) : (
