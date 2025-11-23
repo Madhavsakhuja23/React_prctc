@@ -42,13 +42,13 @@ export default function UploadAuction() {
     };
 
     try {
-      const res = await fetch("https://aurtistiq.onrender.com/api/artworks/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      });
+      const res = await fetch("https://aurtistiq.onrender.com/api/artworks", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(dataToSend),
+});
 
       const data = await res.json();
 
