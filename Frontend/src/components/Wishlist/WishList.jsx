@@ -41,7 +41,7 @@ function Wishlist() {
 
       const data = await res.json();
 
-      // Database returns: { artworkId, snapshot {...} }
+      // Format DB response
       const formatted = data.map((item) => ({
         id: item.artworkId,
         ...item.snapshot,
@@ -60,12 +60,12 @@ function Wishlist() {
   const removeFromWishlist = async (artworkId) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/wishlist/${userId}/${artworkId}`,
+        `${API_BASE}/api/wishlist/remove/${artworkId}`,
         { method: "DELETE" }
       );
 
       if (res.ok) {
-        // Remove from UI instantly
+        // Update UI instantly
         setWishlistItems((prev) =>
           prev.filter((item) => String(item.id) !== String(artworkId))
         );
@@ -82,7 +82,6 @@ function Wishlist() {
         <p className="wishlist-count">{wishlistItems.length} artworks saved</p>
       </section>
 
-      {/* EMPTY WISHLIST VIEW */}
       {wishlistItems.length === 0 ? (
         <div className="empty-wishlist">
           <FaRegHeart className="empty-heart-icon" />
@@ -102,7 +101,6 @@ function Wishlist() {
                   <div className="artist-row">
                     <p className="artist-name">{art.artist}</p>
 
-                    {/* Remove from wishlist */}
                     <span
                       className="like-icon liked"
                       onClick={() => removeFromWishlist(art.id)}
