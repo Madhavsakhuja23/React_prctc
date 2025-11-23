@@ -452,4 +452,22 @@
   border-radius: 50%;
   object-fit: cover;
 }
+/* BACK TO HOME BUTTON */
+.back-home-btn {
+  background: #b08968;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  margin-right: 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.back-home-btn:hover {
+  background: #9c7757;
+  transform: scale(1.05);
+}
 
