@@ -4,7 +4,10 @@ import { addToWishlist, removeFromWishlist, getWishlist } from "../controllers/w
 const router = express.Router();
 
 router.post("/add", addToWishlist);
-router.delete("/remove/:artworkId", removeFromWishlist);
+
+// FIXED: now both userId & artworkId are sent
+router.delete("/:userId/:artworkId", removeFromWishlist);
+
 router.get("/:userId", getWishlist);
 
 export default router;

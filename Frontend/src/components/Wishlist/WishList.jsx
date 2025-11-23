@@ -9,7 +9,7 @@ function Wishlist() {
   const [userId, setUserId] = useState(null);
 
   // ---------------------------
-  // LOAD USER FROM LOCALSTORAGE
+  // LOAD USER FROM LOCAL STORAGE
   // ---------------------------
   useEffect(() => {
     try {
@@ -23,7 +23,7 @@ function Wishlist() {
   }, []);
 
   // ---------------------------
-  // FETCH WISHLIST FROM DATABASE
+  // LOAD WISHLIST
   // ---------------------------
   useEffect(() => {
     if (!userId) return;
@@ -41,7 +41,6 @@ function Wishlist() {
 
       const data = await res.json();
 
-      // Format DB response
       const formatted = data.map((item) => ({
         id: item.artworkId,
         ...item.snapshot,
@@ -55,17 +54,16 @@ function Wishlist() {
   };
 
   // ---------------------------
-  // REMOVE FROM DATABASE WISHLIST
+  // REMOVE FROM WISHLIST (FIXED)
   // ---------------------------
   const removeFromWishlist = async (artworkId) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/wishlist/remove/${artworkId}`,
+        `${API_BASE}/api/wishlist/${userId}/${artworkId}`,
         { method: "DELETE" }
       );
 
       if (res.ok) {
-        // Update UI instantly
         setWishlistItems((prev) =>
           prev.filter((item) => String(item.id) !== String(artworkId))
         );
@@ -86,7 +84,7 @@ function Wishlist() {
         <div className="empty-wishlist">
           <FaRegHeart className="empty-heart-icon" />
           <h3>Your wishlist is empty</h3>
-          <p>Click the heart icon on artworks to add them here!</p>
+          <p>Click the heart icon on artworks to add them!</p>
         </div>
       ) : (
         <section className="artsy-grid-section">
