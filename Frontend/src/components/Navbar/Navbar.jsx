@@ -116,7 +116,7 @@ function Navbar({ onSearch }) {
                   {/* SELLER → SHOW ONLY PROFILE + LOGOUT */}
                   {user.role === "Seller" ? (
                     <>
-                      <NavLink to="/seller/profile">View Profile</NavLink>
+                      <NavLink to="/profile">View Profile</NavLink>
                       <button className="logout-btn" onClick={handleLogout}>
                         Log Out
                       </button>
@@ -168,7 +168,7 @@ function Navbar({ onSearch }) {
               <div className="mobile-user-dropdown">
                 {user.role === "Seller" ? (
                   <>
-                    <NavLink onClick={toggleMenu} to="/seller/profile">View Profile</NavLink>
+                    <NavLink onClick={toggleMenu} to="/profile">View Profile</NavLink>
                     <button className="logout-btn" onClick={handleLogout}>Log Out</button>
                   </>
                 ) : (
