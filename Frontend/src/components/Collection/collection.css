@@ -1,15 +1,18 @@
+/* HEADER */
 .collect-header {
   padding: 40px 40px;
-  text-align: left; 
-  color: #5a4632; 
-  margin-top: 80px; /* ✅ Add this line */
+  text-align: left;
+  color: #5a4632;
+  margin-top: 80px;
 }
+
 .collect-header h2 {
   font-size: 2rem;
   font-weight: 500;
   margin: 0;
 }
 
+/* SIDEBAR */
 .filter-sidebar {
   position: fixed;
   top: 0;
@@ -36,6 +39,18 @@
   font-weight: 600;
 }
 
+.filter-sidebar button#closeSidebar {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #666;
+}
+
+/* SEARCH FIELD */
 .filter-search {
   position: relative;
   margin-bottom: 30px;
@@ -63,6 +78,7 @@
   border-color: #5a4632;
 }
 
+/* FILTER GROUPS */
 .filter-group {
   margin-bottom: 30px;
   border-bottom: 1px solid #eee;
@@ -88,17 +104,7 @@
   color: #555;
 }
 
-.filter-sidebar button#closeSidebar {
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #666;
-}
-
+/* BACKDROP OVERLAY */
 .overlay {
   position: fixed;
   top: 0;
@@ -117,6 +123,7 @@
   visibility: visible;
 }
 
+/* FILTER BUTTON */
 .filter-btn {
   background: #f5efe6;
   color: #5a4632;
@@ -137,8 +144,7 @@
   background: #e5dbcf;
 }
 
-
-/* Artsy-style Artwork Grid */
+/* ART GRID */
 .artsy-grid-section {
   padding: 2rem 4rem;
 }
@@ -148,6 +154,7 @@
   column-gap: 1.6rem;
 }
 
+/* CARD */
 .artsy-card {
   display: inline-block;
   width: 100%;
@@ -155,30 +162,27 @@
   cursor: pointer;
   break-inside: avoid;
   position: relative;
-  overflow: visible; 
   transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
 .image-wrapper {
   overflow: hidden;
-  display: block;
   position: relative;
   border-radius: 4px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  z-index: 1;
 }
 
 .image-wrapper img {
   width: 100%;
   display: block;
   transition: transform 0.5s ease;
-  will-change: transform;
 }
 
 .image-wrapper:hover img {
   transform: scale(1.1) translateX(-3%);
 }
 
+/* CARD INFO */
 .artsy-card-info {
   margin-top: 0.5rem;
 }
@@ -189,11 +193,21 @@
   line-height: 1.4;
 }
 
-.artist-name {
-  font-weight: bold;
+.artist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
-.art-title, .art-gallery {
+.artist-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #222;
+}
+
+.art-title,
+.art-gallery {
   color: #555;
 }
 
@@ -201,54 +215,12 @@
   color: #5a4632;
   font-weight: 500;
 }
-@keyframes pop-heart {
-  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-  30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-  50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-}
 
-/* Responsive Masonry */
-@media (max-width: 1200px) {
-  .artsy-masonry { column-count: 3; padding: 2rem 2rem; }
-}
-@media (max-width: 768px) {
-  .artsy-masonry { column-count: 2; padding: 2rem 1rem; }
-}
-@media (max-width: 480px) {
-  .artsy-masonry { column-count: 1; }
-}
-/* Search Highlight */
-.artsy-card.highlight .image-wrapper {
-  transform: translateY(-15px) scale(1.1); /* more lift and zoom */
-  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
-  z-index: 10;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-}
-
-
-.artsy-card.dim {
-  opacity: 0.4;
-  transform: scale(0.98);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.artist-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-}
-.artist-name {
-  font-weight: 600;
-  font-size: 15px;
-  color: #222;
-}
-
+/* HEART ICON */
 .like-icon {
   font-size: 18px;
-  color: red;
   cursor: pointer;
+  color: #ccc;
   transition: color 0.3s ease, transform 0.2s ease;
 }
 
@@ -257,22 +229,20 @@
 }
 
 .like-icon:hover {
-  transform: scale(1.05);
+  transform: scale(1.15);
 }
 
-.image-wrapper {
-  position: relative;
-}
-
+/* DOUBLE TAP HEART ANIMATION */
 .double-tap-heart {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
-  color: rgba(255, 0, 0, 0.645);
-  font-size: 70px;
+  color: rgba(255, 0, 0, 0.8);
+  font-size: 80px;
   pointer-events: none;
+  z-index: 10;
 }
 
 .double-tap-heart.animate {
@@ -280,20 +250,78 @@
 }
 
 @keyframes pop-heart {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  30% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 1;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+}
+
+/* HIGHLIGHT / DIM ON SEARCH */
+.artsy-card.highlight .image-wrapper {
+  transform: translateY(-15px) scale(1.1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  z-index: 10;
+}
+
+.artsy-card.dim {
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+
+/* LOGIN POPUP */
+.login-message-popup {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #5a4632 0%, #8b6f47 100%);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  z-index: 9999;
+  text-align: center;
+  animation: slideDown 0.4s ease;
+  max-width: 400px;
+  width: 90%;
+}
+
+.login-message-popup p {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.login-message-popup a {
+  display: inline-block;
+  background: white;
+  color: #5a4632;
+  padding: 10px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-message-popup a:hover {
+  background: #f5efe6;
+  transform: scale(1.05);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -30px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .artsy-masonry { column-count: 3; padding: 2rem 2rem; }
+}
+
+@media (max-width: 768px) {
+  .artsy-masonry { column-count: 2; padding: 2rem 1rem; }
+}
+
+@media (max-width: 480px) {
+  .artsy-masonry { column-count: 1; }
 }

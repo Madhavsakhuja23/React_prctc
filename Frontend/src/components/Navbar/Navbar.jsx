@@ -137,6 +137,7 @@ function Navbar({ onSearch }) {
                 >
                   <NavLink to="/profile">View Profile</NavLink>
                   <NavLink to="/settings">Settings</NavLink>
+                  <NavLink to="/wishlist">Wishlist</NavLink>
 
                   <button
                     type="button"

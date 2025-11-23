@@ -1,0 +1,144 @@
+.wishlist-header {
+  padding: 40px;
+  text-align: left;
+  color: #5a4632;
+  margin-top: 80px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.wishlist-header h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0 0 10px 0;
+}
+
+.wishlist-count {
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+}
+
+.empty-wishlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-heart-icon {
+  font-size: 80px;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.empty-wishlist h3 {
+  font-size: 1.5rem;
+  color: #5a4632;
+  margin-bottom: 10px;
+}
+
+.empty-wishlist p {
+  font-size: 1rem;
+  color: #888;
+}
+
+/* Grid styles - same as collection */
+.artsy-grid-section {
+  padding: 2rem 4rem;
+}
+
+.artsy-masonry {
+  column-count: 4;
+  column-gap: 1.6rem;
+}
+
+.artsy-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  break-inside: avoid;
+  position: relative;
+}
+
+.image-wrapper {
+  overflow: hidden;
+  display: block;
+  position: relative;
+  border-radius: 4px;
+}
+
+.image-wrapper img {
+  width: 100%;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.image-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+.artsy-card-info {
+  margin-top: 0.5rem;
+}
+
+.artsy-card-info p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.artist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.artist-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #222;
+}
+
+.art-title, .art-gallery {
+  color: #555;
+}
+
+.art-price {
+  color: #5a4632;
+  font-weight: 500;
+}
+
+.like-icon {
+  font-size: 18px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.like-icon.liked {
+  color: red;
+}
+
+.like-icon:hover {
+  transform: scale(1.15);
+  color: #ff6b6b;
+}
+
+@media (max-width: 1200px) {
+  .artsy-masonry { column-count: 3; }
+}
+
+@media (max-width: 768px) {
+  .artsy-masonry { column-count: 2; }
+  .artsy-grid-section { padding: 2rem 1rem; }
+  .wishlist-header { padding: 30px 20px; }
+}
+
+@media (max-width: 480px) {
+  .artsy-masonry { column-count: 1; }
+}

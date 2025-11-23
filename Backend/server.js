@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import artworkRoutes from "./routes/artworkRoutes.js";
 import connectDB from "./config/db.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/artworks", artworkRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // IMPORTANT: API 404 handler MUST BE BEFORE app.listen
 app.use((req, res) => {
