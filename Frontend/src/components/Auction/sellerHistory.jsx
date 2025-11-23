@@ -10,8 +10,8 @@ function SellerHistory() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [uploadedArtworks, setUploadedArtworks] = useState([]);
   const [editItem, setEditItem] = useState(null);
+  const [deleteId, setDeleteId] = useState(null); // NEW
 
-  // Validate ObjectId (must be 24 hex chars)
   const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
   // ---------------- LOAD SELLER ARTWORKS ----------------
@@ -51,9 +51,6 @@ function SellerHistory() {
 
   // ------------------- DELETE ARTWORK --------------------
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Delete this artwork permanently?");
-    if (!confirmDelete) return;
-
     try {
       const res = await fetch(
         `https://aurtistiq.onrender.com/api/artworks/${id}`,
@@ -63,6 +60,7 @@ function SellerHistory() {
       if (res.status === 200) {
         toast.success("Artwork deleted");
         setUploadedArtworks((prev) => prev.filter((a) => a._id !== id));
+        setDeleteId(null);
       } else {
         toast.error("Error deleting artwork");
       }
@@ -71,22 +69,17 @@ function SellerHistory() {
     }
   };
 
-  // ------------------- EDIT OPEN MODAL --------------------
+  // ------------------- OPEN EDIT MODAL --------------------
   const handleEdit = (item) => {
-    console.log("Opening edit modal for ID:", item._id);
     setEditItem(item);
   };
 
   // ------------------- SAVE EDIT --------------------------
   const handleSave = async (updatedValues) => {
     if (!editItem?._id || !isValidObjectId(editItem._id)) {
-      console.error("❌ INVALID editItem._id", editItem?._id);
       toast.error("Invalid artwork ID — cannot update");
       return;
     }
-
-    console.log("🟡 Saving ID:", editItem._id);
-    console.log("🟡 ID Length:", editItem._id.length);
 
     try {
       const res = await fetch(
@@ -98,8 +91,7 @@ function SellerHistory() {
         }
       );
 
-      const body = await res.json();
-      console.log("🟢 Backend Response:", body);
+      const result = await res.json();
 
       if (res.status === 200) {
         toast.success("Artwork updated!");
@@ -112,10 +104,9 @@ function SellerHistory() {
 
         setEditItem(null);
       } else {
-        toast.error("Failed to update artwork");
+        toast.error(result.message || "Update failed");
       }
     } catch (err) {
-      console.log("❌ PUT ERROR:", err);
       toast.error("Server error (PUT failed)");
     }
   };
@@ -143,7 +134,7 @@ function SellerHistory() {
 
                   <button
                     className="delete-icon"
-                    onClick={() => handleDelete(art._id)}
+                    onClick={() => setDeleteId(art._id)} // ← CUSTOM POPUP
                   >
                     <RxCross2 />
                   </button>
@@ -173,6 +164,27 @@ function SellerHistory() {
         </div>
       </section>
 
+      {/* ---------------- DELETE CONFIRM MODAL ---------------- */}
+      {deleteId && (
+        <div className="delete-overlay" onClick={() => setDeleteId(null)}>
+          <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Artwork?</h3>
+            <p>This action cannot be undone.</p>
+
+            <div className="delete-actions">
+              <button className="cancel-btn" onClick={() => setDeleteId(null)}>
+                Cancel
+              </button>
+
+              <button className="delete-btn" onClick={() => handleDelete(deleteId)}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- EDIT MODAL ---------------- */}
       {editItem && (
         <EditModal
           artwork={editItem}
@@ -188,10 +200,9 @@ function SellerHistory() {
 
 export default SellerHistory;
 
-
-// ----------------------------------------------------------
-// ----------------------- EDIT MODAL ------------------------
-// ----------------------------------------------------------
+/* ------------------------------------------------------------------
+ ----------------------- EDIT MODAL ---------------------------------
+ ------------------------------------------------------------------ */
 
 function EditModal({ artwork, onSave, onClose }) {
   const [formData, setFormData] = useState({
@@ -230,6 +241,7 @@ function EditModal({ artwork, onSave, onClose }) {
           <button className="cancel-btn" onClick={onClose}>
             Cancel
           </button>
+
           <button className="save-btn" onClick={() => onSave(formData)}>
             Save Changes
           </button>
