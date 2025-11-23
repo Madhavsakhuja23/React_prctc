@@ -446,3 +446,10 @@
   align-items: center;
   gap: 15px;
 }
+.small-avatar {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50%;
+  object-fit: cover;
+}
+

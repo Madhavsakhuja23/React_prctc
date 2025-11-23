@@ -29,12 +29,12 @@ export default function SellerDashboard() {
   const storedUser = JSON.parse(localStorage.getItem("user") || "null");
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  const userId = storedUser?.id; // IMPORTANT: THIS is your valid ID
+  // FIX: Correct seller lookup ID
+  const userId = storedUser?._id || storedUser?.id;
 
   // Redirect if not logged in
   useEffect(() => {
     if (!isLoggedIn || !userId) {
-      console.warn("User not logged in → Redirect");
       window.location.href = "/login";
     }
   }, [isLoggedIn, userId]);
@@ -49,20 +49,18 @@ export default function SellerDashboard() {
   });
 
   const [formData, setFormData] = useState({ name: "", bio: "" });
-  const [errors, setErrors] = useState({});
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState(DEFAULT_AVATAR);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loadingSave, setLoadingSave] = useState(false);
 
-  // LOAD SELLER PROFILE
+  // Load seller profile
   useEffect(() => {
     if (!userId) return;
 
     async function fetchSeller() {
       try {
         const res = await fetch(`${API_BASE}/api/sellers/${userId}`);
-
         const data = await res.json();
 
         setSellerData({
@@ -78,7 +76,6 @@ export default function SellerDashboard() {
         });
 
         setPreviewAvatar(data.avatar || DEFAULT_AVATAR);
-
       } catch (err) {
         console.error("Failed to load seller:", err);
       }
@@ -87,12 +84,12 @@ export default function SellerDashboard() {
     fetchSeller();
   }, [userId]);
 
-  // FORM INPUT HANDLER
+  // Input handler
   const handleInputChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // AVATAR PREVIEW
+  // Avatar preview
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -104,7 +101,7 @@ export default function SellerDashboard() {
     reader.readAsDataURL(file);
   };
 
-  // SAVE PROFILE
+  // Save seller profile
   const handleSave = async () => {
     if (!formData.name || !formData.bio) {
       alert("Name & Bio are required");
@@ -127,7 +124,6 @@ export default function SellerDashboard() {
       });
 
       const updated = await res.json();
-
       setSellerData(updated);
       setSaveSuccess(true);
 
@@ -135,7 +131,6 @@ export default function SellerDashboard() {
         setShowModal(false);
         setSaveSuccess(false);
       }, 1000);
-
     } catch (err) {
       console.error("Failed to save:", err);
     }
@@ -150,7 +145,7 @@ export default function SellerDashboard() {
           <h1 className="header-logo">ArtGallery</h1>
 
           <div className="header-user">
-            <img src={sellerData.avatar} alt="seller avatar" className="header-avatar" />
+            <img src={sellerData.avatar} alt="seller avatar" className="header-avatar small-avatar" />
             <span>{sellerData.name}</span>
           </div>
         </div>
@@ -159,7 +154,7 @@ export default function SellerDashboard() {
       <div className="dashboard-container">
         <h2 className="dashboard-title">Seller Dashboard</h2>
 
-        {/* Only total artworks */}
+        {/* Total artworks */}
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-card-header">
@@ -170,10 +165,9 @@ export default function SellerDashboard() {
           </div>
         </div>
 
-        {/* Graph */}
+        {/* Chart */}
         <div className="graph-container">
           <h3 className="graph-title">Monthly Sales Overview</h3>
-
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={initialSalesData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -185,11 +179,11 @@ export default function SellerDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* About section */}
+        {/* About Section */}
         <div className="profile-section">
           <h3 className="profile-title">About Seller</h3>
           <div className="profile-top">
-            <img src={sellerData.avatar} alt="avatar" className="profile-avatar" />
+            <img src={sellerData.avatar} alt="avatar" className="profile-avatar small-avatar" />
             <p className="profile-bio">{sellerData.bio}</p>
           </div>
         </div>
@@ -201,7 +195,7 @@ export default function SellerDashboard() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* MODAL */}
       <AnimatePresence>
         {showModal && (
           <motion.div className="modal-backdrop" onClick={() => setShowModal(false)}>
@@ -216,7 +210,7 @@ export default function SellerDashboard() {
               {/* Avatar */}
               <div className="form-group">
                 <label>Avatar</label>
-                <img src={previewAvatar} alt="preview" className="avatar-preview" />
+                <img src={previewAvatar} alt="preview" className="avatar-preview small-avatar" />
                 <input type="file" accept="image/*" onChange={handleFileChange} />
               </div>
 
@@ -232,12 +226,12 @@ export default function SellerDashboard() {
                 <textarea name="bio" value={formData.bio} onChange={handleInputChange}></textarea>
               </div>
 
+              {/* Actions */}
               <div className="modal-actions">
                 <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
 
                 <button className={`save-btn ${saveSuccess ? "save-btn-success" : ""}`}
-                  onClick={handleSave}
-                >
+                  onClick={handleSave}>
                   {loadingSave ? "Saving..." : saveSuccess ? <><Check /> Saved</> : "Save Changes"}
                 </button>
               </div>
