@@ -1,7 +1,6 @@
 // controllers/sellerController.js
 import mongoose from "mongoose";
-import Artwork from "../models/artworkModel.js";
-import Order from "../models/orderModel.js";
+import Artwork from "../models/Artwork.js";
 import Seller from "../models/sellerModel.js";
 
 const tryObjectId = (val) => {
@@ -12,15 +11,16 @@ const tryObjectId = (val) => {
   }
 };
 
+// ========== GET SELLER ==========
 export const getSeller = async (req, res) => {
   try {
     const { userId } = req.params;
     if (!userId) return res.status(400).json({ message: "Missing userId" });
 
-    // find by userId
+    // find seller by userId
     let seller = await Seller.findOne({ userId });
 
-    // If seller does not exist, create a default one
+    // auto-create seller if missing
     if (!seller) {
       seller = await Seller.create({
         userId,
@@ -30,50 +30,29 @@ export const getSeller = async (req, res) => {
       });
     }
 
-    // Count total artworks uploaded by this seller.
-    // Artwork schema may store seller as sellerId (string or ObjectId) or sellerUserId. We'll try both.
+    // Count artworks uploaded by seller
     const idAsObjectId = tryObjectId(userId);
     const totalArtworks = await Artwork.countDocuments({
       $or: [
         { sellerId: userId },
         ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
+        { sellerUserId: userId }
       ]
     });
 
-    // Count artworks sold (orders with status "completed")
-    const artworksSold = await Order.countDocuments({
-      $or: [
-        { sellerId: userId },
-        ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
-      ],
-      status: "completed"
-    });
-
-    // Count pending orders
-    const pendingOrders = await Order.countDocuments({
-      $or: [
-        { sellerId: userId },
-        ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
-      ],
-      status: "pending"
-    });
-
-    // Return seller document and counts
+    // Return seller + artworks count ONLY
     res.json({
       ...seller.toObject(),
-      totalArtworks,
-      artworksSold,
-      pendingOrders
+      totalArtworks
     });
+
   } catch (err) {
     console.error("Seller dashboard fetch error", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// ========== UPDATE SELLER ==========
 export const updateSeller = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -81,57 +60,38 @@ export const updateSeller = async (req, res) => {
 
     const { name, bio, avatar } = req.body;
 
-    // Basic validation
     if (!name || typeof name !== "string" || name.trim().length < 2) {
       return res.status(400).json({ message: "Invalid name" });
     }
 
     const update = {
       name: name.trim(),
-      bio: (bio && typeof bio === "string") ? bio.trim() : "",
+      bio: bio?.trim() || ""
     };
+
     if (avatar) update.avatar = avatar;
 
-    // findOneAndUpdate with upsert: create if not exists
     const updated = await Seller.findOneAndUpdate(
       { userId },
       { $set: update, $setOnInsert: { userId } },
       { new: true, upsert: true }
     );
 
-    // Optionally, update counts if you want real-time stored stats (or keep them computed in GET)
-    // We'll compute counts and attach to response
+    // Count artworks (optional but useful)
     const idAsObjectId = tryObjectId(userId);
     const totalArtworks = await Artwork.countDocuments({
       $or: [
         { sellerId: userId },
         ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
+        { sellerUserId: userId }
       ]
-    });
-    const artworksSold = await Order.countDocuments({
-      $or: [
-        { sellerId: userId },
-        ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
-      ],
-      status: "completed"
-    });
-    const pendingOrders = await Order.countDocuments({
-      $or: [
-        { sellerId: userId },
-        ...(idAsObjectId ? [{ sellerId: idAsObjectId }] : []),
-        { sellerUserId: userId },
-      ],
-      status: "pending"
     });
 
     res.json({
       ...updated.toObject(),
-      totalArtworks,
-      artworksSold,
-      pendingOrders
+      totalArtworks
     });
+
   } catch (err) {
     console.error("Seller update error", err);
     res.status(500).json({ message: "Server error" });
