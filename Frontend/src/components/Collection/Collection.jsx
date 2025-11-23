@@ -153,18 +153,18 @@ function Collection() {
   // ---------------------------
   // DB: REMOVE FROM WISHLIST
   // ---------------------------
-  const removeFromWishlist = async (artId) => {
-    try {
-      const res = await fetch(`${API_BASE}/api/wishlist/remove/${artId}`, {
-  method: "DELETE"
-});
+  const removeFromWishlist = async (artworkId) => {
+  try {
+    const res = await fetch(`${API_BASE}/api/wishlist/remove/${artworkId}`, {
+      method: "DELETE",
+    });
 
-      return res.ok;
-    } catch (err) {
-      console.error("Remove wishlist error:", err);
-      return false;
-    }
-  };
+    return res.ok;
+  } catch (err) {
+    console.error("Remove wishlist error:", err);
+    return false;
+  }
+};
 
   // ---------------------------
   // TOGGLE LIKE (heart click)

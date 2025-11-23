@@ -207,13 +207,19 @@ function Fcollection() {
       }
     } else {
       // remove from DB
-      const ok = await removeFromWishlist(key);
-      if (ok) {
-        window.dispatchEvent(new Event("wishlistUpdated"));
-      } else {
-        // revert on failure
-        setLikedArtworks((prev) => ({ ...prev, [key]: true }));
-      }
+     const removeFromWishlist = async (artworkId) => {
+  try {
+    const res = await fetch(`${API_BASE}/api/wishlist/remove/${artworkId}`, {
+      method: "DELETE",
+    });
+
+    return res.ok;
+  } catch (err) {
+    console.error("Remove wishlist error:", err);
+    return false;
+  }
+};
+
     }
   };
 
