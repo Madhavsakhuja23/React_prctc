@@ -9,19 +9,12 @@ function Collection() {
   const [likedArtworks, setLikedArtworks] = useState({});
   const [priceFilter, setPriceFilter] = useState([]);
   const [sizeFilter, setSizeFilter] = useState([]);
-  const [nationalityFilter, setNationalityFilter] = useState([]);
   const [highlighted, setHighlighted] = useState(null);
 
-  // -----------------------------------
-  // Disable scroll when sidebar opens
-  // -----------------------------------
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
   }, [sidebarOpen]);
 
-  // -----------------------------------
-  // ARTWORK LIST
-  // -----------------------------------
   const artworks = [
     { id: 1, img: "c1.jpg", artist: "Bea Kusovszky", title: "Generational Code V", gallery: "VILTIN Gallery", price: "€6,200–€6,900", size: "Small" },
     { id: 2, img: "c2.jpg", artist: "Isabel Bonilla", title: "Denim Ocean 15, 2025", gallery: "PxP Contemporary", price: "US$100", size: "Small" },
@@ -35,34 +28,21 @@ function Collection() {
     { id: 10, img: "T6.jpg", artist: "Maria Santos", title: "Ocean Whispers", gallery: "Maritime Gallery", price: "€7,300–€8,100", size: "Small" }
   ];
 
-  // -----------------------------------
-  // PRICE EXTRACTOR
-  // -----------------------------------
   const extractPrice = (str) => {
     const match = String(str).match(/\d+(?:,\d+)?/);
-    if (!match) return 0;
-    return parseFloat(match[0].replace(/,/g, ""));
+    return match ? parseFloat(match[0].replace(/,/g, "")) : 0;
   };
 
-  // -----------------------------------
-  // FILTER TOGGLERS
-  // -----------------------------------
   const toggle = (value, setter) => {
-    setter(prev =>
+    setter((prev) =>
       prev.includes(value)
-        ? prev.filter(item => item !== value)
+        ? prev.filter((v) => v !== value)
         : [...prev, value]
     );
   };
 
-  // -----------------------------------
-  // SEARCH HIGHLIGHT LOGIC
-  // -----------------------------------
   useEffect(() => {
-    if (!searchKeyword) {
-      setHighlighted(null);
-      return;
-    }
+    if (!searchKeyword) return setHighlighted(null);
 
     const found = artworks.find(
       (a) =>
@@ -73,21 +53,18 @@ function Collection() {
     setHighlighted(found ? found.id : null);
   }, [searchKeyword]);
 
-  // -----------------------------------
-  // APPLY FILTERS
-  // -----------------------------------
   const filteredArtworks = artworks.filter((art) => {
     const p = extractPrice(art.price);
 
-    // SEARCH
-    if (searchKeyword) {
-      const match =
+    if (
+      searchKeyword &&
+      !(
         art.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        art.artist.toLowerCase().includes(searchKeyword.toLowerCase());
-      if (!match) return false;
-    }
+        art.artist.toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    )
+      return false;
 
-    // PRICE
     if (priceFilter.length > 0) {
       let ok = false;
       if (priceFilter.includes("under1k") && p < 1000) ok = true;
@@ -96,15 +73,11 @@ function Collection() {
       if (!ok) return false;
     }
 
-    // SIZE
     if (sizeFilter.length > 0 && !sizeFilter.includes(art.size)) return false;
 
     return true;
   });
 
-  // -----------------------------------
-  // LIKE FUNCTION
-  // -----------------------------------
   const toggleLike = (id) => {
     setLikedArtworks((prev) => ({
       ...prev,
@@ -116,8 +89,11 @@ function Collection() {
     <>
       <Navbar onSearch={setSearchKeyword} />
 
-      {/* FILTER BUTTON */}
-      <button className="filter-btn-modern" onClick={() => setSidebarOpen(true)}>
+      {/* FIXED FILTER BUTTON (Option B placement) */}
+      <button
+        className="filter-btn-modern"
+        onClick={() => setSidebarOpen(true)}
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
           viewBox="0 0 24 24" fill="none" stroke="currentColor"
           strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -136,10 +112,7 @@ function Collection() {
 
       {/* OVERLAY */}
       {sidebarOpen && (
-        <div
-          className="filter-overlay show"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="filter-overlay show" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* SIDEBAR */}
@@ -160,13 +133,6 @@ function Collection() {
       {/* ART GRID */}
       <section className="artsy-grid-section">
         <div className="artsy-masonry">
-
-          {filteredArtworks.length === 0 && (
-            <p style={{ textAlign: "center", padding: "1rem" }}>
-              No artworks match your filters.
-            </p>
-          )}
-
           {filteredArtworks.map((art) => (
             <div
               key={art.id}
@@ -185,7 +151,6 @@ function Collection() {
               <div className="artsy-card-info">
                 <div className="artist-row">
                   <p className="artist-name">{art.artist}</p>
-
                   <span
                     className={`like-icon ${likedArtworks[art.id] ? "liked" : ""}`}
                     onClick={() => toggleLike(art.id)}

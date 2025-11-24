@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../Navbar/Navbar";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import "./collection.css";
+import "./Fcollection.css";
 
 const API_BASE = "https://aurtistiq.onrender.com";
 
