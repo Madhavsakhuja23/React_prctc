@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CarouselSection from "./CarouselSection";
 import AuctionCard from "./AuctionCard";
 import "./Auction.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Auctions() {
   const [activeTab, setActiveTab] = useState("curators");
@@ -58,7 +58,7 @@ export default function Auctions() {
             Bid on works you love with auctions on Aurtistiq. With bidding
             opening daily, you can discover new artists every day.
           </p>
-          <a href="/learn">Learn more →</a>
+          <Link to="/learn">Learn more →</Link>
         </div>
       </section>
 

@@ -63,7 +63,7 @@ function SignUp() {
   };
 
   const validateEmail = async () => {
-    const key = "ema_live_myHyeXrksaI52K3z9nDBs1z46RYEjNL9W4CaMKRd";
+    const key = "ema_live_WQcW2uwplHJH2kN4rMi3s3vK8hus0TodbWQnDJ8l";
     const email = formData.email.trim();
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

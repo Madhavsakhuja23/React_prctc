@@ -25,6 +25,7 @@ import DynamicAuctionDetail from './components/Auction/DynamicAuctionDetail'
 import SellerHistory from './components/Auction/sellerHistory'
 import Wishlist from './components/Wishlist/WishList'
 import SellerDashboard from './components/Seller/SellerProfile'
+import BiddingGuide from "./components/Auction/BiddingGuide";
 const Router= createBrowserRouter([
   {
     path:"/",
@@ -138,6 +139,13 @@ const Router= createBrowserRouter([
     path:"/profile",
     element:<>
     <SellerDashboard />
+    </>
+  },{
+    path:"/learn", 
+    element: <>
+      <Navbar />
+      <BiddingGuide />
+      <Footer />
     </>
   }
 ])

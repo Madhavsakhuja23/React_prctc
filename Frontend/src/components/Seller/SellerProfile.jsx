@@ -16,7 +16,7 @@ import "./SellerDashboard.css";
 // Use uploaded asset as logo (transform path to URL in your environment if needed)
 const SITE_LOGO = "/mnt/data/ff82e51c-aa3c-4f1e-8903-4cfc687429a6.png";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "https://aurtistiq.onrender.com";
+const API_BASE ="https://aurtistiq.onrender.com";
 const DEFAULT_AVATAR = "/default-avatar.png";
 
 const initialSalesData = [
