@@ -1,27 +1,27 @@
 /* ============================
-   FILTER BUTTON (STAY BELOW HEADER)
+   FILTER BUTTON (STAY BELOW HEADER, SLIGHTLY RIGHT)
 =============================== */
 .filter-btn-modern {
-  position: static;      /* stays in normal flow */
-  margin: 1rem 0;        /* space below header */
+  position: static;       /* stays in normal flow */
+  margin: 1rem 0 1rem 2rem; /* top 1rem, right 0, bottom 1rem, left 2rem */
   background: #f5efe6;
   color: #5a4632;
   border: 1px solid #8b6f47;
   padding: 10px 16px;
-  margin-right: 300px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
+  z-index: auto;
   transition: background 0.2s ease;
-  z-index: auto;         /* reset z-index */
 }
 
 .filter-btn-modern:hover {
   background: #e5dbcf;
 }
+
 
 
 /* ============================
