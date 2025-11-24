@@ -213,27 +213,31 @@ function Fcollection() {
   };
 
   const handleDoubleTap = async (id) => {
-    if (!checkLogin()) return;
+  if (!checkLogin()) return;
 
-    const now = Date.now();
-    const last = lastTapRef.current[id] || 0;
+  const now = Date.now();
+  const last = lastTapRef.current[id] || 0;
 
-    if (now - last < 300) {
-      // double tap detected
-      if (!likedArtworks[id]) {
-        // optimistic UI
-        setLikedArtworks((prev) => ({ ...prev, [id]: true }));
-        const art = artworks.find((a) => a.id === id);
-        const ok = await addToWishlist(art);
-        if (!ok) {
-          setLikedArtworks((prev) => ({ ...prev, [id]: false }));
-        }
+  if (now - last < 200) {
+    // ❤️ INSTANT heart animation
+    triggerHeartAnimation(id);
+
+    // 👍 Handle like after animation triggers
+    if (!likedArtworks[id]) {
+      setLikedArtworks((prev) => ({ ...prev, [id]: true }));
+
+      const art = artworks.find((a) => a.id === id);
+      const ok = await addToWishlist(art);
+
+      if (!ok) {
+        setLikedArtworks((prev) => ({ ...prev, [id]: false }));
       }
-      triggerHeartAnimation(id);
     }
+  }
 
-    lastTapRef.current[id] = now;
-  };
+  lastTapRef.current[id] = now;
+};
+
 
   // ---------------------------
   // FILTER HELPERS
