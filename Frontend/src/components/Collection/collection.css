@@ -150,11 +150,11 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
-  font-size: 90px;
-  color: rgba(255, 0, 0, 0.9);
   pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.35s ease, opacity 0.35s ease;
+  color: rgba(255, 0, 0, 0.35);   /* 35% opacity */
+  font-size: 80px;
+  z-index: 10;
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
 }
 
 .double-tap-heart.animate {
