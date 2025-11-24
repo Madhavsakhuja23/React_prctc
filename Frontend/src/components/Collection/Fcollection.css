@@ -1,10 +1,9 @@
 /* ============================
-   FILTER BUTTON (FIXED & VISIBLE)
+   FILTER BUTTON (STAY BELOW HEADER)
 =============================== */
 .filter-btn-modern {
-  position: fixed;
-  top: 90px;
-  left: 25px;
+  position: static;      /* stays in normal flow */
+  margin: 1rem 0;        /* space below header */
   background: #f5efe6;
   color: #5a4632;
   border: 1px solid #8b6f47;
@@ -16,12 +15,13 @@
   align-items: center;
   gap: 8px;
   transition: background 0.2s ease;
-  z-index: 3000;
+  z-index: auto;         /* reset z-index */
 }
 
 .filter-btn-modern:hover {
   background: #e5dbcf;
 }
+
 
 /* ============================
    SIDEBAR
