@@ -137,7 +137,7 @@
   opacity: 0;
   pointer-events: none;
   color: rgba(255, 0, 0, 0.8);    /* brighter */
-  font-size: 90px;                 /* slightly bigger */
+  font-size: 60px;                 /* slightly bigger */
   z-index: 10;
   transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
