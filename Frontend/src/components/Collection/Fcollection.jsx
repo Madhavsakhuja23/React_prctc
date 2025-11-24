@@ -306,7 +306,10 @@ function Fcollection() {
   return (
     <>
       <Navbar onSearch={handleSearch} />
-
+<section className="collect-header">
+        <h2>Collect art and design online</h2>
+      </section>
+      
       {/* Filter button */}
       <button className="filter-btn-modern" onClick={() => setSidebarOpen(true)}>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
