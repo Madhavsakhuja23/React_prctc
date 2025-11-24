@@ -143,3 +143,21 @@
   .artsy-masonry { column-count: 1; }
   .filter-btn-modern { top: 290px; left: 14px; }
 }
+/* DOUBLE-TAP HEART OVERLAY */
+.double-tap-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  font-size: 90px;
+  color: rgba(255, 0, 0, 0.9);
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.double-tap-heart.animate {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.5;
+}
